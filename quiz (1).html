@@ -1,0 +1,1134 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>RekenCheck — Groep 7</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&family=Lora:wght@400;500&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --achtergrond: #F8F5EE;
+      --wit:         #FFFFFF;
+      --inkt:        #1C1C1E;
+      --accent:      #2563EB;
+      --accent-zacht:#EFF4FF;
+      --goed:        #16A34A;
+      --goed-zacht:  #F0FDF4;
+      --fout:        #DC2626;
+      --fout-zacht:  #FEF2F2;
+      --grijs-1:     #F3F4F6;
+      --grijs-2:     #E5E7EB;
+      --grijs-3:     #9CA3AF;
+      --grijs-4:     #6B7280;
+      --font-hoofd:  'Plus Jakarta Sans', sans-serif;
+      --font-tekst:  'Lora', Georgia, serif;
+      --schaduw:     0 1px 4px rgba(0,0,0,0.06), 0 4px 16px rgba(0,0,0,0.04);
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: var(--font-tekst);
+      background: var(--achtergrond);
+      color: var(--inkt);
+      min-height: 100vh;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    .scherm { display: none; }
+    .scherm.actief {
+      display: flex; flex-direction: column; align-items: center;
+      min-height: 100vh; padding: 0 1.2rem 4rem;
+      animation: opkomen 0.35s ease both;
+    }
+    @keyframes opkomen {
+      from { opacity: 0; transform: translateY(10px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    .inner { width: 100%; max-width: 620px; }
+
+    /* HEADER */
+    .site-header {
+      width: 100%; max-width: 620px;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 1.6rem 0 1.4rem;
+      border-bottom: 1px solid var(--grijs-2);
+      margin-bottom: 1.2rem;
+    }
+    .logo { font-family: var(--font-hoofd); font-weight: 700; font-size: 1.1rem; }
+    .logo span { color: var(--accent); }
+    .voortgang-wrap { display: flex; align-items: center; gap: 0.7rem; font-family: var(--font-hoofd); font-size: 0.78rem; color: var(--grijs-4); }
+    .voortgang-balk { width: 120px; height: 4px; background: var(--grijs-2); border-radius: 100px; overflow: hidden; }
+    .voortgang-fill { height: 100%; background: var(--accent); border-radius: 100px; transition: width 0.5s ease; }
+
+    /* KNOPPEN */
+    .btn {
+      display: inline-flex; align-items: center; justify-content: center; gap: 0.4rem;
+      font-family: var(--font-hoofd); font-weight: 600; font-size: 0.97rem;
+      padding: 0.75rem 1.75rem; border-radius: 10px; border: none;
+      cursor: pointer; transition: all 0.15s; text-decoration: none; line-height: 1;
+    }
+    .btn:active { transform: translateY(1px); }
+    .btn-primair { background: var(--accent); color: white; box-shadow: 0 1px 3px rgba(37,99,235,0.3); }
+    .btn-primair:hover { background: #1D4ED8; transform: translateY(-1px); box-shadow: 0 4px 12px rgba(37,99,235,0.25); }
+    .btn-secundair { background: transparent; color: var(--accent); border: 1.5px solid var(--accent); }
+    .btn-secundair:hover { background: var(--accent-zacht); }
+    .btn-grijs { background: var(--grijs-1); color: var(--grijs-4); border: 1px solid var(--grijs-2); }
+    .btn-grijs:hover { background: var(--grijs-2); color: var(--inkt); }
+    .btn:disabled { opacity: 0.45; cursor: not-allowed; transform: none !important; box-shadow: none !important; }
+
+    /* START */
+    .start-hero {
+      background: var(--wit); border: 1px solid var(--grijs-2);
+      border-radius: 20px; box-shadow: var(--schaduw);
+      padding: 2.5rem 2rem; margin-bottom: 1rem;
+    }
+    .start-badge {
+      display: inline-flex; align-items: center; gap: 0.4rem;
+      font-family: var(--font-hoofd); font-size: 0.75rem; font-weight: 600;
+      color: var(--accent); background: var(--accent-zacht);
+      padding: 0.3rem 0.8rem; border-radius: 100px; margin-bottom: 1.2rem;
+    }
+    .start-hero h1 {
+      font-family: var(--font-hoofd); font-size: 2rem; font-weight: 700;
+      line-height: 1.2; margin-bottom: 0.7rem; letter-spacing: -0.02em;
+    }
+    .start-hero p {
+      font-size: 1rem; color: var(--grijs-4); line-height: 1.65;
+      margin-bottom: 1.5rem; max-width: 44ch;
+    }
+
+    .dekking-grid {
+      display: grid; grid-template-columns: 1fr 1fr;
+      gap: 0.5rem; margin-bottom: 2rem;
+    }
+    .dekking-item {
+      background: var(--achtergrond); border: 1px solid var(--grijs-2);
+      border-radius: 10px; padding: 0.7rem 0.9rem;
+      font-family: var(--font-hoofd); font-size: 0.78rem;
+      color: var(--grijs-4);
+    }
+    .dekking-item strong { color: var(--inkt); display: block; font-size: 0.82rem; margin-bottom: 0.15rem; }
+
+    .meta-rij { display: grid; grid-template-columns: repeat(3,1fr); gap: 0.6rem; margin-bottom: 2rem; }
+    .meta-item { background: var(--achtergrond); border: 1px solid var(--grijs-2); border-radius: 12px; padding: 0.9rem 0.6rem; text-align: center; }
+    .meta-getal { font-family: var(--font-hoofd); font-size: 1.4rem; font-weight: 700; color: var(--inkt); display: block; }
+    .meta-label { font-family: var(--font-hoofd); font-size: 0.72rem; color: var(--grijs-3); }
+
+    .naam-veld {
+      background: var(--wit); border: 1px solid var(--grijs-2);
+      border-radius: 16px; box-shadow: var(--schaduw);
+      padding: 1.4rem 1.6rem; margin-bottom: 0.8rem;
+    }
+    .naam-veld label { font-family: var(--font-hoofd); font-size: 0.85rem; font-weight: 600; display: block; margin-bottom: 0.5rem; }
+    .naam-veld input {
+      width: 100%; padding: 0.7rem 0.9rem; border: 1.5px solid var(--grijs-2);
+      border-radius: 8px; font-family: var(--font-tekst); font-size: 1rem;
+      color: var(--inkt); background: var(--achtergrond); outline: none;
+      transition: border-color 0.15s, box-shadow 0.15s;
+    }
+    .naam-veld input:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(37,99,235,0.1); }
+    .naam-veld input::placeholder { color: var(--grijs-3); }
+
+    /* QUIZ */
+    .quiz-meta {
+      display: flex; align-items: center; justify-content: space-between;
+      margin-bottom: 0.8rem;
+    }
+    .domein-tag {
+      display: inline-flex; align-items: center; gap: 0.35rem;
+      font-family: var(--font-hoofd); font-size: 0.72rem; font-weight: 600;
+      color: var(--accent); background: var(--accent-zacht);
+      padding: 0.28rem 0.75rem; border-radius: 100px;
+    }
+    .subdomein-tag {
+      font-family: var(--font-hoofd); font-size: 0.7rem;
+      color: var(--grijs-3); font-style: italic;
+    }
+
+    .vraag-kaart {
+      background: var(--wit); border: 1px solid var(--grijs-2);
+      border-radius: 16px; box-shadow: var(--schaduw);
+      padding: 1.8rem; margin-bottom: 0.9rem;
+    }
+    .vraag-nummer { font-family: var(--font-hoofd); font-size: 0.75rem; color: var(--grijs-3); margin-bottom: 0.6rem; }
+    .vraag-tekst { font-family: var(--font-tekst); font-size: 1.15rem; line-height: 1.6; color: var(--inkt); }
+
+    .opties-lijst { display: flex; flex-direction: column; gap: 0.55rem; margin-bottom: 0.9rem; }
+    .optie {
+      background: var(--wit); border: 1.5px solid var(--grijs-2); border-radius: 12px;
+      padding: 0.95rem 1.2rem; cursor: pointer;
+      display: flex; align-items: center; gap: 0.9rem;
+      transition: border-color 0.15s, background 0.15s;
+      font-family: var(--font-tekst); font-size: 1rem; color: var(--inkt);
+      text-align: left; width: 100%;
+    }
+    .optie:hover:not(:disabled) { border-color: var(--accent); background: var(--accent-zacht); }
+    .optie-letter {
+      font-family: var(--font-hoofd); font-weight: 600; font-size: 0.75rem;
+      min-width: 26px; height: 26px; border-radius: 50%;
+      background: var(--grijs-1); color: var(--grijs-4);
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0; transition: all 0.15s; border: 1px solid var(--grijs-2);
+    }
+    .optie:hover:not(:disabled) .optie-letter { background: var(--accent); color: white; border-color: var(--accent); }
+    .optie.goed  { border-color: var(--goed);  background: var(--goed-zacht); }
+    .optie.goed  .optie-letter { background: var(--goed);  color: white; border-color: var(--goed); }
+    .optie.fout  { border-color: var(--fout);  background: var(--fout-zacht); }
+    .optie.fout  .optie-letter { background: var(--fout);  color: white; border-color: var(--fout); }
+    .optie:disabled { cursor: default; }
+
+    .feedback {
+      display: none; border-radius: 12px; padding: 0.9rem 1.1rem;
+      font-family: var(--font-hoofd); font-size: 0.88rem; line-height: 1.55;
+      margin-bottom: 0.9rem; animation: opkomen 0.25s ease both;
+    }
+    .feedback.goed { background: var(--goed-zacht); color: #14532D; border: 1px solid #BBF7D0; }
+    .feedback.fout { background: var(--fout-zacht); color: #7F1D1D; border: 1px solid #FECACA; }
+
+    .quiz-nav { display: flex; justify-content: flex-end; gap: 0.6rem; }
+
+    /* RESULTAAT */
+    .resultaat-top {
+      background: var(--wit); border: 1px solid var(--grijs-2);
+      border-radius: 20px; box-shadow: var(--schaduw);
+      padding: 2.2rem 2rem; margin-bottom: 1rem; text-align: center;
+    }
+    .res-emoji { font-size: 2.8rem; display: block; margin-bottom: 0.7rem; }
+    .resultaat-top h2 { font-family: var(--font-hoofd); font-size: 1.5rem; font-weight: 700; margin-bottom: 0.25rem; }
+    .res-naam { font-family: var(--font-hoofd); font-size: 0.88rem; color: var(--grijs-4); margin-bottom: 1rem; }
+    .totaal-score { font-family: var(--font-hoofd); font-size: 2.8rem; font-weight: 700; color: var(--accent); display: block; line-height: 1; }
+    .totaal-label { font-family: var(--font-hoofd); font-size: 0.78rem; color: var(--grijs-3); margin-top: 0.3rem; }
+
+    /* DOMEIN SCORES */
+    .domein-blok { margin-bottom: 0.8rem; }
+    .domein-blok-header {
+      font-family: var(--font-hoofd); font-weight: 700; font-size: 0.82rem;
+      color: var(--grijs-4); text-transform: uppercase; letter-spacing: 0.06em;
+      margin-bottom: 0.4rem; padding: 0 0.2rem;
+    }
+    .sub-kaarten { display: flex; flex-direction: column; gap: 0.4rem; }
+    .sub-kaart {
+      background: var(--wit); border: 1px solid var(--grijs-2);
+      border-radius: 12px; padding: 0.8rem 1.1rem;
+      display: flex; align-items: center; gap: 0.8rem;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+    }
+    .sub-kaart.oefenen { border-left: 3px solid var(--fout); }
+    .sub-kaart.sterk   { border-left: 3px solid var(--goed); }
+    .sub-naam { font-family: var(--font-hoofd); font-size: 0.85rem; font-weight: 500; flex: 1; }
+    .sub-uitslag {
+      font-family: var(--font-hoofd); font-weight: 700; font-size: 0.85rem;
+      white-space: nowrap;
+    }
+    .sub-uitslag.sterk   { color: var(--goed); }
+    .sub-uitslag.oefenen { color: var(--fout); }
+    .sub-badge {
+      font-family: var(--font-hoofd); font-size: 0.68rem; font-weight: 600;
+      padding: 0.18rem 0.55rem; border-radius: 100px; white-space: nowrap;
+    }
+    .badge-sterk   { background: var(--goed-zacht); color: var(--goed); }
+    .badge-oefenen { background: var(--fout-zacht); color: var(--fout); }
+
+    /* WERKBOEK */
+    .werkboek-kaart {
+      background: var(--wit); border: 1px solid var(--grijs-2);
+      border-radius: 16px; box-shadow: var(--schaduw); padding: 1.6rem; margin-bottom: 1rem;
+    }
+    .werkboek-kaart h3 { font-family: var(--font-hoofd); font-size: 1rem; font-weight: 700; margin-bottom: 0.4rem; }
+    .werkboek-kaart p { font-family: var(--font-hoofd); font-size: 0.88rem; color: var(--grijs-4); line-height: 1.6; margin-bottom: 1.2rem; }
+    .genereer-status {
+      display: none; align-items: center; gap: 0.8rem;
+      padding: 0.9rem 1.1rem; background: var(--accent-zacht);
+      border: 1px solid #BFDBFE; border-radius: 10px;
+      font-family: var(--font-hoofd); font-size: 0.85rem;
+      color: var(--accent); margin-bottom: 1rem;
+    }
+    .genereer-status.actief { display: flex; }
+    .spinner { width: 16px; height: 16px; border: 2px solid #BFDBFE; border-top-color: var(--accent); border-radius: 50%; animation: spin 0.7s linear infinite; flex-shrink: 0; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .werkboek-nav { display: flex; gap: 0.6rem; flex-wrap: wrap; }
+
+    /* PRINT */
+    #werkboek-container { display: none; }
+
+    @media print {
+      body > *:not(#werkboek-container) { display: none !important; }
+      #werkboek-container { display: block !important; font-family: Georgia, serif; font-size: 11pt; color: #1C1C1E; line-height: 1.65; }
+      .wb-pagina { page-break-after: always; padding: 2cm; }
+      .wb-pagina:last-child { page-break-after: avoid; }
+      .wb-header { background: #1C1C1E !important; color: white !important; padding: 0.6cm 1cm; margin: -2cm -2cm 1cm -2cm; display: flex; justify-content: space-between; align-items: center; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+      .wb-header-logo { font-weight: 700; font-size: 12pt; font-family: sans-serif; }
+      .wb-header-logo span { color: #60A5FA; }
+      .wb-header-info { font-size: 8pt; opacity: 0.6; font-family: sans-serif; }
+      .wb-titel-blok { margin-bottom: 0.8cm; }
+      .wb-titel-blok h1 { font-size: 26pt; font-family: sans-serif; font-weight: 700; line-height: 1.1; margin-bottom: 0.2cm; }
+      .wb-naam { font-size: 12pt; font-family: sans-serif; color: #4B5563; margin-bottom: 0.1cm; }
+      .wb-datum { font-size: 8pt; font-family: sans-serif; color: #9CA3AF; }
+      .wb-score-tabel { width: 100%; border-collapse: collapse; margin: 0.5cm 0; font-size: 9pt; }
+      .wb-score-tabel th { background: #F3F4F6 !important; padding: 6pt 8pt; text-align: left; font-family: sans-serif; font-size: 8pt; color: #6B7280; font-weight: 600; border-bottom: 1px solid #E5E7EB; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+      .wb-score-tabel td { padding: 6pt 8pt; border-bottom: 1px solid #F3F4F6; }
+      .wb-domein-header { margin: 0.7cm 0 0.3cm; padding-bottom: 0.2cm; border-bottom: 2px solid #E5E7EB; }
+      .wb-domein-naam { font-size: 14pt; font-family: sans-serif; font-weight: 700; }
+      .wb-blok-header { font-family: sans-serif; font-weight: 600; font-size: 10pt; color: #2563EB; margin: 0.5cm 0 0.15cm; }
+      .wb-theorie { background: #F8F5EE !important; padding: 0.3cm 0.4cm; border-left: 3px solid #2563EB; margin-bottom: 0.15cm; font-size: 9.5pt; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+      .wb-voorbeeld { font-style: italic; font-size: 9.5pt; color: #4B5563; margin-bottom: 0.3cm; }
+      .wb-vraag { font-family: sans-serif; font-weight: 600; font-size: 9.5pt; margin: 0.3cm 0 0.1cm; }
+      .wb-antwoord-label { font-family: sans-serif; font-size: 7.5pt; color: #9CA3AF; }
+      .wb-antwoord-lijn { border-bottom: 1px solid #D1D5DB; margin: 0.1cm 0 0.3cm; height: 0.5cm; }
+      .wb-antwoord-tabel { width: 100%; border-collapse: collapse; margin-top: 0.5cm; font-size: 9pt; }
+      .wb-antwoord-tabel th { background: #F3F4F6 !important; color: #6B7280; padding: 5pt; font-family: sans-serif; font-size: 7.5pt; font-weight: 600; border-bottom: 1px solid #E5E7EB; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+      .wb-antwoord-tabel td { padding: 5pt; border-bottom: 1px solid #F3F4F6; }
+      .wb-footer { position: fixed; bottom: 0.5cm; left: 2cm; right: 2cm; text-align: center; font-size: 7pt; color: #D1D5DB; font-family: sans-serif; border-top: 1px solid #F3F4F6; padding-top: 3pt; }
+    }
+
+    @media (max-width: 480px) {
+      .start-hero { padding: 1.8rem 1.4rem; }
+      .start-hero h1 { font-size: 1.65rem; }
+      .dekking-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ════════ START ════════ -->
+<div id="scherm-start" class="scherm actief">
+  <header class="site-header inner">
+    <div class="logo">Reken<span>Check</span></div>
+    <span style="font-family:var(--font-hoofd);font-size:0.78rem;color:var(--grijs-3);">Groep 7 · Volledig</span>
+  </header>
+  <div class="inner">
+    <div class="start-hero">
+      <div class="start-badge">📊 Rekenen · Groep 7 · 22 onderwerpen</div>
+      <h1>Ontdek waar jij goed in bent</h1>
+      <p>Deze quiz dekt alle rekenonderwerpen van groep 7 — zodat er geen blinde vlekken zijn. Je krijgt daarna een werkboek gericht op precies jouw aandachtspunten.</p>
+
+      <div class="meta-rij">
+        <div class="meta-item"><span class="meta-getal">22</span><span class="meta-label">vragen</span></div>
+        <div class="meta-item"><span class="meta-getal">22</span><span class="meta-label">onderwerpen</span></div>
+        <div class="meta-item"><span class="meta-getal">~15</span><span class="meta-label">minuten</span></div>
+      </div>
+
+      <p style="font-family:var(--font-hoofd);font-size:0.82rem;color:var(--grijs-4);margin-bottom:0.8rem;font-weight:600;">Alle onderwerpen die worden getoetst:</p>
+      <div class="dekking-grid">
+        <div class="dekking-item"><strong>🔢 Getallen</strong>Plaatswaarde, ordenen, afronden, bewerkingen, kommagetallen, breuken</div>
+        <div class="dekking-item"><strong>⚖️ Verhoudingen</strong>Breuken, procenten, verhoudingstabel, schaal, verdeelproblemen</div>
+        <div class="dekking-item"><strong>📐 Meten & Meetkunde</strong>Lengte, gewicht, tijd, geld, oppervlakte, vormen</div>
+        <div class="dekking-item"><strong>🔗 Verbanden</strong>Tabellen, grafieken, patronen, formules, gemiddelde</div>
+      </div>
+
+      <button class="btn btn-primair" onclick="startQuiz()" style="width:100%;margin-top:0.5rem;">
+        Begin de quiz →
+      </button>
+    </div>
+
+    <div class="naam-veld">
+      <label for="naam-input">Jouw naam</label>
+      <input type="text" id="naam-input" placeholder="Vul je naam in..." autocomplete="off" />
+    </div>
+    <p style="font-family:var(--font-hoofd);font-size:0.78rem;color:var(--grijs-3);text-align:center;margin-top:0.5rem;">Geen account nodig · Gratis uitproberen</p>
+  </div>
+</div>
+
+<!-- ════════ QUIZ ════════ -->
+<div id="scherm-quiz" class="scherm">
+  <header class="site-header inner">
+    <div class="logo">Reken<span>Check</span></div>
+    <div class="voortgang-wrap">
+      <div class="voortgang-balk"><div class="voortgang-fill" id="voortgang-fill" style="width:0%"></div></div>
+      <span id="voortgang-tekst"></span>
+    </div>
+  </header>
+  <div class="inner">
+    <div class="quiz-meta">
+      <div class="domein-tag" id="huidig-domein-tag"></div>
+      <div class="subdomein-tag" id="huidig-sub-tag"></div>
+    </div>
+    <div class="vraag-kaart">
+      <div class="vraag-nummer" id="vraag-nummer"></div>
+      <div class="vraag-tekst" id="vraag-tekst"></div>
+    </div>
+    <div class="opties-lijst" id="opties-lijst"></div>
+    <div class="feedback" id="feedback"></div>
+    <div class="quiz-nav">
+      <button class="btn btn-primair" id="volgende-btn" onclick="volgendeVraag()" style="display:none;">Volgende →</button>
+      <button class="btn btn-primair" id="resultaat-btn" onclick="toonResultaat()" style="display:none;">Bekijk resultaat</button>
+    </div>
+  </div>
+</div>
+
+<!-- ════════ RESULTAAT ════════ -->
+<div id="scherm-resultaat" class="scherm">
+  <header class="site-header inner">
+    <div class="logo">Reken<span>Check</span></div>
+    <button class="btn btn-grijs" onclick="opnieuw()" style="padding:0.5rem 1rem;font-size:0.8rem;">↩ Opnieuw</button>
+  </header>
+  <div class="inner">
+    <div class="resultaat-top">
+      <span class="res-emoji" id="res-emoji">🎉</span>
+      <h2 id="res-titel"></h2>
+      <p class="res-naam" id="res-naam"></p>
+      <span class="totaal-score" id="totaal-score"></span>
+      <p class="totaal-label">van de 22 vragen goed</p>
+    </div>
+    <div id="domein-blokken"></div>
+    <div class="werkboek-kaart">
+      <h3>📖 Persoonlijk werkboek</h3>
+      <p>Op basis van je resultaten maak ik een werkboek gericht op jouw aandachtspunten — met uitleg, voorbeelden en oefenvragen. Klaar om af te drukken.</p>
+      <div class="genereer-status" id="genereer-status">
+        <div class="spinner"></div>
+        <span id="genereer-tekst">Werkboek wordt opgebouwd...</span>
+      </div>
+      <div class="werkboek-nav">
+        <button class="btn btn-primair" id="genereer-btn" onclick="genereerWerkboek()">Genereer werkboek</button>
+        <button class="btn btn-secundair" id="print-btn" onclick="window.print()" style="display:none;">🖨️ Afdrukken als PDF</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="werkboek-container"></div>
+
+<!-- ════════ VRAGEN ════════ -->
+<script>
+const VRAGEN = [
+  // 1.1 Plaatswaarde
+  { dom:"1", domein:"Getallen", sub:"1.1", subNaam:"Plaatswaarde en getalbegrip",
+    vraag:"Welke cijferwaarde heeft het getal 4 in 3.472.806?",
+    opties:["4.000","40.000","400.000","4.000.000"], goed:2,
+    uitleg:"Het getal 4 staat op de positie van honderdduizenden: 4 × 100.000 = 400.000." },
+
+  // 1.2 Ordenen
+  { dom:"1", domein:"Getallen", sub:"1.2", subNaam:"Ordenen en vergelijken",
+    vraag:"Zet van klein naar groot: 3,07 — 3,7 — 3,17 — 3,1",
+    opties:["3,07 · 3,1 · 3,17 · 3,7","3,1 · 3,07 · 3,17 · 3,7","3,07 · 3,17 · 3,1 · 3,7","3,7 · 3,17 · 3,1 · 3,07"], goed:0,
+    uitleg:"3,07 < 3,10 < 3,17 < 3,70. Vergelijk cijfer voor cijfer na de komma." },
+
+  // 1.3 Afronden
+  { dom:"1", domein:"Getallen", sub:"1.3", subNaam:"Afronden en schatten",
+    vraag:"Rond 48.637 af op honderdtallen.",
+    opties:["48.600","48.700","49.000","48.640"], goed:0,
+    uitleg:"Het tiental (3) is kleiner dan 5, dus het honderdtal blijft: 48.600." },
+
+  // 1.4 Bewerkingen hele getallen
+  { dom:"1", domein:"Getallen", sub:"1.4", subNaam:"Bewerkingen met hele getallen",
+    vraag:"Bereken slim: 12 × 25 + 8 × 25",
+    opties:["400","500","375","450"], goed:1,
+    uitleg:"Samenvoegen: (12 + 8) × 25 = 20 × 25 = 500." },
+
+  // 1.5 Kommagetallen
+  { dom:"1", domein:"Getallen", sub:"1.5", subNaam:"Bewerkingen met kommagetallen",
+    vraag:"Wat is 3,75 × 100?",
+    opties:["37,5","375","3.750","0,375"], goed:1,
+    uitleg:"× 100 schuift de komma twee plaatsen naar rechts: 3,75 → 375." },
+
+  // 1.6 Breuken/decimalen/procenten
+  { dom:"1", domein:"Getallen", sub:"1.6", subNaam:"Breuken, decimalen en procenten",
+    vraag:"Welke drie zijn gelijk aan elkaar: 0,75 — 3/4 — 75% — 7/5?",
+    opties:["0,75 · 3/4 · 75%","3/4 · 75% · 7/5","0,75 · 75% · 7/5","Alle vier"], goed:0,
+    uitleg:"0,75 = 3/4 = 75%. Het getal 7/5 = 1,40 — dat hoort er niet bij." },
+
+  // 2.1 Breuken
+  { dom:"2", domein:"Verhoudingen", sub:"2.1", subNaam:"Breuken",
+    vraag:"Hoeveel is 3/8 van 64?",
+    opties:["8","24","16","32"], goed:1,
+    uitleg:"64 ÷ 8 = 8. Dan 8 × 3 = 24." },
+
+  // 2.2 Procenten
+  { dom:"2", domein:"Verhoudingen", sub:"2.2", subNaam:"Procenten",
+    vraag:"Een jas kost €80. Er is 25% korting. Wat betaal je?",
+    opties:["€20","€55","€60","€65"], goed:2,
+    uitleg:"25% van €80 = €20 korting. €80 − €20 = €60." },
+
+  // 2.3 Verhoudingstabel
+  { dom:"2", domein:"Verhoudingen", sub:"2.3", subNaam:"Verhouding en verhoudingstabel",
+    vraag:"Cement en zand worden gemengd in verhouding 1:4. Hoeveel zand bij 3 kg cement?",
+    opties:["4 kg","12 kg","7 kg","16 kg"], goed:1,
+    uitleg:"Verhouding 1:4 — bij 3× zoveel cement ook 3× zoveel zand: 3 × 4 = 12 kg." },
+
+  // 2.4 Schaal
+  { dom:"2", domein:"Verhoudingen", sub:"2.4", subNaam:"Schaal en vergroting",
+    vraag:"Op een plattegrond is 1 cm = 2 meter. Een kamer is 3,5 cm op de tekening. Hoe lang is de echte kamer?",
+    opties:["5 m","6 m","7 m","3,5 m"], goed:2,
+    uitleg:"3,5 cm × 2 = 7 meter." },
+
+  // 2.5 Verdeelproblemen
+  { dom:"2", domein:"Verhoudingen", sub:"2.5", subNaam:"Verdeelproblemen",
+    vraag:"Drie kinderen verdelen €48 in de verhouding 1:2:3. Hoeveel krijgt het kind met het grootste deel?",
+    opties:["€8","€16","€24","€12"], goed:2,
+    uitleg:"Totaal: 1+2+3 = 6 delen. Eén deel = €48 ÷ 6 = €8. Grootste deel = 3 × €8 = €24." },
+
+  // 3.1 Lengte en omtrek
+  { dom:"3", domein:"Meten en Meetkunde", sub:"3.1", subNaam:"Lengte, omtrek en afstand",
+    vraag:"Een rechthoekige tuin is 8 m lang en 5,5 m breed. Wat is de omtrek?",
+    opties:["27 m","44 m","13,5 m","55 m"], goed:0,
+    uitleg:"Omtrek = 2 × (8 + 5,5) = 2 × 13,5 = 27 m." },
+
+  // 3.2 Gewicht en inhoud
+  { dom:"3", domein:"Meten en Meetkunde", sub:"3.2", subNaam:"Gewicht en inhoud",
+    vraag:"Een fles bevat 1,5 liter. Hoeveel milliliter is dat?",
+    opties:["150 ml","15.000 ml","1.500 ml","0,15 ml"], goed:2,
+    uitleg:"1 liter = 1.000 ml. Dus 1,5 × 1.000 = 1.500 ml." },
+
+  // 3.3 Tijd
+  { dom:"3", domein:"Meten en Meetkunde", sub:"3.3", subNaam:"Tijd",
+    vraag:"Een treinreis begint om 09:47 en duurt 1 uur en 38 minuten. Hoe laat kom je aan?",
+    opties:["11:15","11:25","11:35","10:25"], goed:1,
+    uitleg:"09:47 + 1 uur = 10:47. Dan + 38 min: 10:47 + 13 = 11:00, dan + 25 = 11:25." },
+
+  // 3.4 Geld
+  { dom:"3", domein:"Meten en Meetkunde", sub:"3.4", subNaam:"Geld",
+    vraag:"Je koopt 3 broodjes à €1,35 en een fles water à €0,90. Je betaalt met €10. Hoeveel wisselgeld?",
+    opties:["€4,95","€5,05","€5,50","€5,15"], goed:1,
+    uitleg:"3 × €1,35 = €4,05. Plus €0,90 = €4,95 totaal. Wisselgeld: €10,00 − €4,95 = €5,05." },
+
+  // 3.5 Oppervlakte
+  { dom:"3", domein:"Meten en Meetkunde", sub:"3.5", subNaam:"Oppervlakte en inhoud",
+    vraag:"Een rechthoekige kamer is 6 m lang en 4,5 m breed. Wat is de oppervlakte?",
+    opties:["21 m²","27 m²","24 m²","26 m²"], goed:1,
+    uitleg:"Oppervlakte = 6 × 4,5 = 27 m²." },
+
+  // 3.6 Vormen
+  { dom:"3", domein:"Meten en Meetkunde", sub:"3.6", subNaam:"Meetkundige vormen en ruimtelijk inzicht",
+    vraag:"Hoeveel hoeken heeft een zeshoek?",
+    opties:["5","6","7","8"], goed:1,
+    uitleg:"Een zeshoek heeft 6 hoeken en 6 zijden." },
+
+  // 4.1 Tabellen
+  { dom:"4", domein:"Verbanden", sub:"4.1", subNaam:"Tabellen lezen",
+    vraag:"Een tabel toont verkopen per dag: ma=12, di=8, wo=15, do=10, vr=5. Wat is het totaal?",
+    opties:["45","50","55","48"], goed:1,
+    uitleg:"12 + 8 + 15 + 10 + 5 = 50." },
+
+  // 4.2 Grafieken
+  { dom:"4", domein:"Verbanden", sub:"4.2", subNaam:"Grafieken lezen",
+    vraag:"Een lijngrafiek toont temperatuur. Om 8:00 is het 12°C, om 14:00 is het 22°C. Hoeveel graden steeg de temperatuur?",
+    opties:["8°C","10°C","12°C","14°C"], goed:1,
+    uitleg:"22 − 12 = 10 graden stijging." },
+
+  // 4.3 Patronen
+  { dom:"4", domein:"Verbanden", sub:"4.3", subNaam:"Patronen en reeksen",
+    vraag:"Rij: 3, 7, 11, 15 ... Wat is het 10e getal?",
+    opties:["39","41","43","37"], goed:0,
+    uitleg:"Elke stap +4. Het 10e getal: 3 + 9 × 4 = 3 + 36 = 39." },
+
+  // 4.4 Functionele verbanden
+  { dom:"4", domein:"Verbanden", sub:"4.4", subNaam:"Functionele verbanden",
+    vraag:"Een taxirit kost €2,50 instapkosten plus €1,20 per km. Wat kost een rit van 8 km?",
+    opties:["€9,60","€10,10","€12,10","€11,10"], goed:2,
+    uitleg:"€2,50 + 8 × €1,20 = €2,50 + €9,60 = €12,10." },
+
+  // 4.5 Gemiddelde
+  { dom:"4", domein:"Verbanden", sub:"4.5", subNaam:"Gemiddelde en totaal",
+    vraag:"Lisa heeft vijf cijfers: 7, 8, 6, 9 en 5. Wat is haar gemiddelde?",
+    opties:["6,5","7,0","7,5","8,0"], goed:1,
+    uitleg:"Som = 7+8+6+9+5 = 35. Gemiddelde = 35 ÷ 5 = 7,0." },
+];
+
+const DOMEIN_EMOJI = { "1":"🔢","2":"⚖️","3":"📐","4":"🔗" };
+const DOMEIN_NAAM  = { "1":"Getallen","2":"Verhoudingen","3":"Meten en Meetkunde","4":"Verbanden" };
+const LETTERS = ["A","B","C","D"];
+
+let huidigIndex=0, antwoorden=[], naamKind="", gewacht=false;
+let subScores={};
+
+function toonScherm(id){
+  document.querySelectorAll('.scherm').forEach(s=>s.classList.remove('actief'));
+  document.getElementById(id).classList.add('actief');
+  window.scrollTo(0,0);
+}
+
+function startQuiz(){
+  naamKind=document.getElementById('naam-input').value.trim()||"Leerling";
+  huidigIndex=0; antwoorden=[];
+  toonScherm('scherm-quiz');
+  toonVraag();
+}
+
+function toonVraag(){
+  const v=VRAGEN[huidigIndex];
+  gewacht=false;
+  const pct=Math.round((huidigIndex/VRAGEN.length)*100);
+  document.getElementById('voortgang-fill').style.width=pct+'%';
+  document.getElementById('voortgang-tekst').textContent=`${huidigIndex+1} / ${VRAGEN.length}`;
+  document.getElementById('huidig-domein-tag').textContent=DOMEIN_EMOJI[v.dom]+' '+v.domein;
+  document.getElementById('huidig-sub-tag').textContent=v.sub+' '+v.subNaam;
+  document.getElementById('vraag-nummer').textContent=`Vraag ${huidigIndex+1} van ${VRAGEN.length}`;
+  document.getElementById('vraag-tekst').textContent=v.vraag;
+
+  const lijst=document.getElementById('opties-lijst');
+  lijst.innerHTML='';
+  v.opties.forEach((opt,i)=>{
+    const btn=document.createElement('button');
+    btn.className='optie';
+    btn.innerHTML=`<span class="optie-letter">${LETTERS[i]}</span>${opt}`;
+    btn.onclick=()=>kiesOptie(i);
+    lijst.appendChild(btn);
+  });
+
+  const fb=document.getElementById('feedback');
+  fb.style.display='none'; fb.className='feedback';
+  document.getElementById('volgende-btn').style.display='none';
+  document.getElementById('resultaat-btn').style.display='none';
+}
+
+function kiesOptie(gekozen){
+  if(gewacht)return;
+  gewacht=true;
+  const v=VRAGEN[huidigIndex];
+  const isGoed=gekozen===v.goed;
+  antwoorden.push({dom:v.dom, domein:v.domein, sub:v.sub, subNaam:v.subNaam, goed:isGoed});
+
+  document.querySelectorAll('.optie').forEach((btn,i)=>{
+    btn.disabled=true;
+    if(i===v.goed) btn.classList.add('goed');
+    if(i===gekozen&&!isGoed) btn.classList.add('fout');
+  });
+
+  const fb=document.getElementById('feedback');
+  fb.style.display='block';
+  fb.className=`feedback ${isGoed?'goed':'fout'}`;
+  fb.innerHTML=`<strong>${isGoed?'✓ Correct.':'✗ Niet helemaal.'}</strong> ${v.uitleg}`;
+
+  const isLaatste=huidigIndex===VRAGEN.length-1;
+  document.getElementById(isLaatste?'resultaat-btn':'volgende-btn').style.display='inline-flex';
+}
+
+function volgendeVraag(){ huidigIndex++; toonVraag(); }
+
+function toonResultaat(){
+  document.getElementById('voortgang-fill').style.width='100%';
+
+  // Bouw subScores
+  subScores={};
+  antwoorden.forEach(a=>{
+    const key=a.sub;
+    if(!subScores[key]) subScores[key]={dom:a.dom, domein:a.domein, subNaam:a.subNaam, goed:0, totaal:0};
+    subScores[key].totaal++;
+    if(a.goed) subScores[key].goed++;
+  });
+
+  const totaalGoed=antwoorden.filter(a=>a.goed).length;
+  const totaalPct=Math.round(totaalGoed/VRAGEN.length*100);
+
+  let emoji,titel;
+  if(totaalPct>=85){emoji='🏆';titel='Uitstekend gedaan!';}
+  else if(totaalPct>=65){emoji='👍';titel='Goed bezig!';}
+  else{emoji='💪';titel='Blijven oefenen!';}
+
+  document.getElementById('res-emoji').textContent=emoji;
+  document.getElementById('res-titel').textContent=titel;
+  document.getElementById('res-naam').textContent=`Resultaten van ${naamKind}`;
+  document.getElementById('totaal-score').textContent=`${totaalGoed} / ${VRAGEN.length}`;
+
+  // Groepeer per domein
+  const domGroepen={};
+  Object.values(subScores).forEach(s=>{
+    if(!domGroepen[s.dom]) domGroepen[s.dom]={domein:s.domein, subs:[]};
+    domGroepen[s.dom].subs.push(s);
+  });
+
+  const container=document.getElementById('domein-blokken');
+  container.innerHTML='';
+
+  ["1","2","3","4"].forEach(domNr=>{
+    const g=domGroepen[domNr];
+    if(!g)return;
+    const blok=document.createElement('div');
+    blok.className='domein-blok';
+    blok.innerHTML=`<div class="domein-blok-header">${DOMEIN_EMOJI[domNr]} ${g.domein}</div><div class="sub-kaarten" id="sub-${domNr}"></div>`;
+    container.appendChild(blok);
+
+    g.subs.forEach(s=>{
+      const pct=Math.round(s.goed/s.totaal*100);
+      const klasse=pct>=75?'sterk':'oefenen';
+      const kaart=document.createElement('div');
+      kaart.className=`sub-kaart ${klasse}`;
+      kaart.innerHTML=`
+        <span class="sub-naam">${s.subNaam}</span>
+        <span class="sub-uitslag ${klasse}">${s.goed}/${s.totaal}</span>
+        <span class="sub-badge badge-${klasse}">${klasse==='sterk'?'Sterk':'Oefenen'}</span>
+      `;
+      document.getElementById(`sub-${domNr}`).appendChild(kaart);
+    });
+  });
+
+  toonScherm('scherm-resultaat');
+}
+
+function opnieuw(){
+  document.getElementById('naam-input').value='';
+  document.getElementById('genereer-btn').style.display='inline-flex';
+  document.getElementById('print-btn').style.display='none';
+  document.getElementById('genereer-status').classList.remove('actief');
+  document.getElementById('werkboek-container').innerHTML='';
+  toonScherm('scherm-start');
+}
+</script>
+
+<!-- ════════ WERKBOEK ════════ -->
+<script>
+// ============================================================
+// REKENCHECK — VOLLEDIGE OEFENBANK
+// 22 subonderwerpen × 6 vragen = 132 oefenvragen
+// Opbouw per blok: vragen 1-2 basis, 3-4 middel, 5-6 context/toepassing
+// ============================================================
+
+const OEFENDATA = {
+
+  // ══════════════════════════════════════════════
+  // DOMEIN 1 — GETALLEN
+  // ══════════════════════════════════════════════
+
+  "1.1": {
+    domein: "1", domeinNaam: "Getallen", subNaam: "Plaatswaarde en getalbegrip",
+    uitleg: "Elk cijfer in een getal heeft een waarde die afhangt van zijn positie. Van rechts naar links: eenheden, tientallen, honderdtallen, duizendtallen, tienduizendtallen, honderdduizendtallen, miljoenen.",
+    voorbeeld: "Voorbeeld: in het getal 3.472.806 heeft de 4 de waarde 400.000 (honderdduizendtallen).",
+    vragen: [
+      ["Welke waarde heeft het cijfer 7 in het getal 4.730?", "700"],
+      ["Schrijf het getal: vijfduizend driehonderd en acht.", "5.308"],
+      ["Welke waarde heeft het cijfer 5 in het getal 2.534.100?", "500.000"],
+      ["Schrijf het getal: twee miljoen, vijfenveertigduizend en zeven.", "2.045.007"],
+      ["Splits 4.628 in duizendtallen, honderdtallen, tientallen en eenheden.", "4.000 + 600 + 20 + 8"],
+      ["Een fabriek maakt per jaar 1.385.200 producten. Welke waarde heeft het cijfer 3?", "300.000"],
+    ]
+  },
+
+  "1.2": {
+    domein: "1", domeinNaam: "Getallen", subNaam: "Ordenen en vergelijken",
+    uitleg: "Bij kommagetallen vergelijk je van links naar rechts, cijfer voor cijfer. Eerst voor de komma, dan de tienden, dan de honderdsten. Bij breuken zet je ze om naar decimalen.",
+    voorbeeld: "Voorbeeld: 3,07 of 3,1? Tiende: 0 vs 1 → dus 3,07 < 3,1",
+    vragen: [
+      ["Welk getal is groter: 4,5 of 4,49?", "4,5 (want 4,50 > 4,49)"],
+      ["Zet op volgorde van klein naar groot: 2,3 — 2,09 — 2,31", "2,09 — 2,3 — 2,31"],
+      ["Zet op volgorde van klein naar groot: 3,07 — 3,7 — 3,17 — 3,1", "3,07 — 3,1 — 3,17 — 3,7"],
+      ["Welk getal ligt TUSSEN 1/2 en 3/4? Kies het juiste antwoord.", "5/8 (want 5/8 = 0,625, en 0,5 < 0,625 < 0,75)"],
+      ["Zet op volgorde: 0,6 — 2/3 — 60% — 5/8", "60% = 0,6 < 5/8 (0,625) < 2/3 (0,667)"],
+      ["Jan heeft 3/4 liter, Piet heeft 0,8 liter, Sara heeft 78%. Wie heeft het meest?", "Piet (0,8 > 0,78 > 0,75)"],
+    ]
+  },
+
+  "1.3": {
+    domein: "1", domeinNaam: "Getallen", subNaam: "Afronden en schatten",
+    uitleg: "Afronden: kijk naar het cijfer rechts van de afrondpositie. Is dat 5 of meer? Dan ga je omhoog. Minder dan 5? Dan blijf je.",
+    voorbeeld: "Voorbeeld: 48.637 afronden op honderdtallen → tiental is 3 (< 5), dus 48.600.",
+    vragen: [
+      ["Rond 3.472 af op honderdtallen.", "3.500"],
+      ["Rond 4,762 af op tienden.", "4,8"],
+      ["Rond 48.637 af op honderdtallen.", "48.600"],
+      ["Bereken 38 × 24 via een handige tussenstap.", "912 (bijv. 40 × 24 = 960, min 2 × 24 = 48, dus 960 − 48 = 912)"],
+      ["Een school heeft 1.284 leerlingen. Rond af op tientallen.", "1.280"],
+      ["Een winkel verkoopt 24 dozen met elk 36 koekjes. Hoeveel koekjes zijn dat in totaal?", "864"],
+    ]
+  },
+
+  "1.4": {
+    domein: "1", domeinNaam: "Getallen", subNaam: "Bewerkingen met hele getallen",
+    uitleg: "Bij optellen en aftrekken werk je van rechts naar links. Bij vermenigvuldigen en delen gebruik je handige tussenstappen. Let op de volgorde: haakjes eerst, dan × en ÷, dan + en −.",
+    voorbeeld: "Voorbeeld: 12 × 25 + 8 × 25 = (12+8) × 25 = 20 × 25 = 500.",
+    vragen: [
+      ["Bereken: 2.500 − 384 + 176", "2.292"],
+      ["Bereken: 48 × 25", "1.200"],
+      ["Bereken: 12 × 25 + 8 × 25", "500"],
+      ["Bereken: 3.600 ÷ 12", "300"],
+      ["Bereken: 4 × 125 − 3 × 40", "380"],
+      ["Een school koopt 24 dozen met elk 48 pennen. Hoeveel pennen in totaal?", "1.152"],
+    ]
+  },
+
+  "1.5": {
+    domein: "1", domeinNaam: "Getallen", subNaam: "Bewerkingen met kommagetallen",
+    uitleg: "× 10 schuift de komma één plaats naar rechts. × 100 twee plaatsen. ÷ 10 schuift de komma één plaats naar links. Bij optellen en aftrekken zet je de komma's onder elkaar.",
+    voorbeeld: "Voorbeeld: 3,75 × 100 = 375. En: 3,5 + 2,75 → zet komma's onder elkaar → 6,25.",
+    vragen: [
+      ["Wat is 4,08 × 10?", "40,8"],
+      ["Wat is 3,75 × 100?", "375"],
+      ["Bereken: 3,5 + 2,75", "6,25"],
+      ["Bereken: 7,6 − 0,8", "6,8"],
+      ["Jan koopt 2,5 kg appels voor €1,80 per kg. Wat betaalt hij?", "€4,50"],
+      ["Een plank is 3,60 m lang. Je zaagt er drie stukken van elk 0,85 m af. Hoeveel is er over?", "1,05 m"],
+    ]
+  },
+
+  "1.6": {
+    domein: "1", domeinNaam: "Getallen", subNaam: "Breuken, decimalen en procenten",
+    uitleg: "Onthoud de basisomzettingen: 1/4 = 0,25 = 25%. 1/2 = 0,5 = 50%. 3/4 = 0,75 = 75%. 1/5 = 0,2 = 20%. 1/10 = 0,1 = 10%.",
+    voorbeeld: "Voorbeeld: 3/4 = 0,75 = 75%. Allemaal dezelfde waarde, alleen anders geschreven.",
+    vragen: [
+      ["Zet om naar decimaal: 3/4", "0,75"],
+      ["Zet om naar procent: 1/5", "20%"],
+      ["Welke drie zijn gelijk: 0,75 — 3/4 — 75% — 7/5?", "0,75 — 3/4 — 75%"],
+      ["Zet op volgorde van klein naar groot: 1/2 — 0,6 — 55% — 3/5", "1/2 (50%) < 55% < 0,6 = 3/5 (60%)"],
+      ["Is 2/3 groter of kleiner dan 0,6?", "Groter (2/3 ≈ 0,667 > 0,6)"],
+      ["Een glas is voor 3/8 gevuld. Hoeveel procent is dat? En hoeveel procent is leeg?", "37,5% gevuld, 62,5% leeg"],
+    ]
+  },
+
+  // ══════════════════════════════════════════════
+  // DOMEIN 2 — VERHOUDINGEN
+  // ══════════════════════════════════════════════
+
+  "2.1": {
+    domein: "2", domeinNaam: "Verhoudingen", subNaam: "Breuken",
+    uitleg: "Breuk van een hoeveelheid: deel door de noemer, vermenigvuldig met de teller. Vereenvoudigen: deel teller en noemer door hun grootste gemene deler.",
+    voorbeeld: "Voorbeeld: 3/8 van 64 → 64 ÷ 8 = 8, dan 8 × 3 = 24.",
+    vragen: [
+      ["Hoeveel is 1/4 van 80?", "20"],
+      ["Hoeveel is 3/8 van 64?", "24"],
+      ["Vereenvoudig: 18/24", "3/4"],
+      ["Hoeveel is 2/3 van 90?", "60"],
+      ["Hoeveel is 1/4 + 1/2?", "3/4"],
+      ["In een klas van 32 leerlingen heeft 3/8 een fiets. Hoeveel leerlingen is dat?", "12"],
+    ]
+  },
+
+  "2.2": {
+    domein: "2", domeinNaam: "Verhoudingen", subNaam: "Procenten",
+    uitleg: "Percentage berekenen: deel door 100, vermenigvuldig met het percentage. Of gebruik de kortere weg: 10% = deel door 10, 25% = deel door 4, 50% = deel door 2.",
+    voorbeeld: "Voorbeeld: 25% korting op €80 → €80 ÷ 4 = €20 korting → je betaalt €60.",
+    vragen: [
+      ["Bereken 10% van 340.", "34"],
+      ["Bereken 25% van 60.", "15"],
+      ["Een jas kost €80. Er is 25% korting. Wat betaal je?", "€60"],
+      ["In een klas van 32 zijn 8 leerlingen ziek. Welk percentage?", "25%"],
+      ["Bereken 75% van 120.", "90"],
+      ["Een fiets kost €240. Je betaalt 10% aanbetaling. Hoeveel betaal je later nog?", "€216"],
+    ]
+  },
+
+  "2.3": {
+    domein: "2", domeinNaam: "Verhoudingen", subNaam: "Verhouding en verhoudingstabel",
+    uitleg: "Zoek eerst de waarde per 1 eenheid door te delen. Dan vermenigvuldig je. Of gebruik een verhoudingstabel en vul hem stap voor stap in.",
+    voorbeeld: "Voorbeeld: 5 kaartjes = €7,50. Per kaartje: €7,50 ÷ 5 = €1,50. Voor 8 kaartjes: 8 × €1,50 = €12,00.",
+    vragen: [
+      ["Bij 2 pakken zitten 6 pennen. Hoeveel pennen bij 5 pakken?", "15 pennen"],
+      ["5 kaartjes kosten €7,50. Wat kosten 8 kaartjes?", "€12,00"],
+      ["Cement en zand in verhouding 1:4. Hoeveel zand bij 3 kg cement?", "12 kg"],
+      ["Een auto rijdt 9 liter per 100 km. Hoeveel liter voor 250 km?", "22,5 liter"],
+      ["Recept voor 4 personen: 200 g bloem. Hoeveel voor 6 personen?", "300 g"],
+      ["Een trein rijdt 180 km in 2 uur. Hoe ver rijdt hij in 3,5 uur?", "315 km"],
+    ]
+  },
+
+  "2.4": {
+    domein: "2", domeinNaam: "Verhoudingen", subNaam: "Schaal en vergroting",
+    uitleg: "Schaal 1:100 betekent: 1 cm op de tekening = 100 cm in werkelijkheid. Vermenigvuldig de maat op de tekening met de schaalfactor om de werkelijke maat te vinden.",
+    voorbeeld: "Voorbeeld: schaal 1:200, kamer op tekening 3,5 cm → werkelijk: 3,5 × 200 = 700 cm = 7 meter.",
+    vragen: [
+      ["Schaal 1:100. Op de tekening is de kamer 4 cm. Hoe groot is de echte kamer?", "400 cm = 4 meter"],
+      ["Schaal 1:50.000. Op de kaart is 3 cm. Hoe ver is dat in km?", "1,5 km"],
+      ["Een foto van 4 × 6 cm wordt 3× vergroot. Nieuwe afmetingen?", "12 × 18 cm"],
+      ["Op een plattegrond is 1 cm = 2 meter. Een kamer is 3,5 cm op de tekening. Hoe lang echt?", "7 meter"],
+      ["Schaal 1:25.000. De werkelijke afstand is 750 m. Hoe lang is dat op de kaart in cm?", "3 cm"],
+      ["Schaal 1:50. Op een tekening is een raam 6 cm breed. Hoe breed is het echte raam?", "300 cm = 3 meter"],
+    ]
+  },
+
+  "2.5": {
+    domein: "2", domeinNaam: "Verhoudingen", subNaam: "Verdeelproblemen",
+    uitleg: "Verdelen in verhouding: tel alle delen op, bereken de waarde van 1 deel, vermenigvuldig per persoon. Bij deel en geheel: gebruik breuken of procenten.",
+    voorbeeld: "Voorbeeld: €48 verdelen in 1:2:3 → 6 delen totaal. 1 deel = €8. Verdeling: €8, €16, €24.",
+    vragen: [
+      ["Verdeel €30 eerlijk over 4 kinderen. Hoeveel krijgt elk kind?", "€7,50"],
+      ["Drie kinderen verdelen €48 in verhouding 1:2:3. Hoeveel krijgt het kleinste deel?", "€8"],
+      ["Van een taart is 3/8 opgegeten. Hoeveel procent is er nog over?", "62,5%"],
+      ["€100 verdelen in verhouding 2:3. Hoeveel krijgt elk?", "€40 en €60"],
+      ["90 leerlingen verdeeld over twee scholen in verhouding 4:5. Hoeveel per school?", "40 en 50"],
+      ["Een erfenis van €12.000 wordt verdeeld over drie kinderen in verhouding 1:2:3. Hoeveel krijgt het middelste kind?", "€4.000"],
+    ]
+  },
+
+  // ══════════════════════════════════════════════
+  // DOMEIN 3 — METEN EN MEETKUNDE
+  // ══════════════════════════════════════════════
+
+  "3.1": {
+    domein: "3", domeinNaam: "Meten en Meetkunde", subNaam: "Lengte, omtrek en afstand",
+    uitleg: "Omtrek = alle zijden bij elkaar optellen. Zet altijd eenheden om naar dezelfde eenheid voor je berekent. 1 km = 1.000 m = 100.000 cm.",
+    voorbeeld: "Voorbeeld: rechthoek 8 × 5,5 m → omtrek = 2 × (8 + 5,5) = 2 × 13,5 = 27 m.",
+    vragen: [
+      ["Vierkant met zijde 9 cm. Wat is de omtrek?", "36 cm"],
+      ["Rechthoek 12 cm × 5 cm. Wat is de omtrek?", "34 cm"],
+      ["Hoeveel cm is 3,25 km?", "325.000 cm"],
+      ["Een rechthoekige tuin is 8 m × 5,5 m. Wat is de omtrek?", "27 m"],
+      ["Je loopt 3× om een park van 80 × 60 m. Hoeveel meter?", "840 m"],
+      ["Een driehoek heeft zijden van 5,4 cm, 7,2 cm en 8,9 cm. Wat is de omtrek?", "21,5 cm"],
+    ]
+  },
+
+  "3.2": {
+    domein: "3", domeinNaam: "Meten en Meetkunde", subNaam: "Gewicht en inhoud",
+    uitleg: "1 kg = 1.000 g. 1 liter = 1.000 ml. Zet altijd om naar dezelfde eenheid voor je optelt of aftrekt.",
+    voorbeeld: "Voorbeeld: 1,5 liter = 1,5 × 1.000 = 1.500 ml. En: 2,75 kg = 2.750 g.",
+    vragen: [
+      ["Hoeveel ml is 1,5 liter?", "1.500 ml"],
+      ["Hoeveel gram is 2,75 kg?", "2.750 g"],
+      ["Een emmer bevat 8,5 liter. Hoeveel ml is dat?", "8.500 ml"],
+      ["Je hebt 3 pakken meel van elk 750 g. Hoeveel kg is dat samen?", "2,25 kg"],
+      ["Een recept vraagt 0,4 liter melk. Je hebt een fles van 1 liter. Hoeveel ml blijft over?", "600 ml"],
+      ["Een vrachtwagen laadt 24 dozen van elk 12,5 kg. Wat is het totale gewicht in kg?", "300 kg"],
+    ]
+  },
+
+  "3.3": {
+    domein: "3", domeinNaam: "Meten en Meetkunde", subNaam: "Tijd",
+    uitleg: "1 uur = 60 minuten. 1 minuut = 60 seconden. Tel minuten op tot het volgende hele uur, dan de resterende uren. Of reken direct.",
+    voorbeeld: "Voorbeeld: 09:47 + 1u38 → +13 min naar 10:00, dan +1u25 min → 11:25.",
+    vragen: [
+      ["Hoeveel minuten zijn er in 2¼ uur?", "135 minuten"],
+      ["Een film duurt 1u55 en begint om 19:15. Hoe laat is hij klaar?", "21:10"],
+      ["Een treinreis begint om 09:47 en duurt 1u38. Hoe laat kom je aan?", "11:25"],
+      ["2u30 min + 1u45 min = ?", "4 uur 15 minuten"],
+      ["Hoeveel seconden zijn er in een kwartier?", "900 seconden"],
+      ["Een wedstrijd duurt 3 kwartier. Ze beginnen om 14:20. Hoe laat is het einde?", "15:05"],
+    ]
+  },
+
+  "3.4": {
+    domein: "3", domeinNaam: "Meten en Meetkunde", subNaam: "Geld",
+    uitleg: "Zet bedragen netjes onder elkaar met de komma op dezelfde positie. Wisselgeld = betaald bedrag − kosten. Bij kortingen: bereken het kortingsbedrag en trek dat af.",
+    voorbeeld: "Voorbeeld: 3 × €1,35 + €0,90 = €4,05 + €0,90 = €4,95. Wisselgeld van €10: €10 − €4,95 = €5,05.",
+    vragen: [
+      ["Je koopt 4 items à €3,25. Totaalbedrag?", "€13,00"],
+      ["Appels kosten €2,40 per kg. Je wilt 750 g. Wat betaal je?", "€1,80"],
+      ["Je koopt 3 broodjes à €1,35 en water à €0,90. Wisselgeld van €10?", "€5,05"],
+      ["10% korting op €45. Wat betaal je?", "€40,50"],
+      ["Je spaart €12,50 per week. Na hoeveel weken heb je €100?", "8 weken"],
+      ["Een fiets kost €320. Je hebt al €185 gespaard. Hoeveel moet je nog sparen?", "€135"],
+    ]
+  },
+
+  "3.5": {
+    domein: "3", domeinNaam: "Meten en Meetkunde", subNaam: "Oppervlakte en inhoud",
+    uitleg: "Oppervlakte rechthoek = lengte × breedte. Driehoek = (grondlijn × hoogte) ÷ 2. Schrijf de eenheid altijd erbij: cm² of m².",
+    voorbeeld: "Voorbeeld: kamer 6 × 4,5 m → oppervlakte = 27 m². Vierkant met omtrek 36 cm → zijde = 9 cm → oppervlakte = 81 cm².",
+    vragen: [
+      ["Rechthoek 9 cm × 6 cm. Oppervlakte?", "54 cm²"],
+      ["Kamer 6 m × 4,5 m. Oppervlakte?", "27 m²"],
+      ["Driehoek: grondlijn 8 cm, hoogte 5 cm. Oppervlakte?", "20 cm²"],
+      ["Vierkant met omtrek 36 cm. Oppervlakte?", "81 cm²"],
+      ["Tuin 12 m × 8 m. Hoeveel tegels van 0,5 m × 0,5 m heb je nodig?", "384 tegels"],
+      ["Een L-vormige kamer: groot deel 6 × 4 m, klein deel 2 × 3 m. Totale oppervlakte?", "30 m²"],
+    ]
+  },
+
+  "3.6": {
+    domein: "3", domeinNaam: "Meten en Meetkunde", subNaam: "Meetkundige vormen en ruimtelijk inzicht",
+    uitleg: "Herken vormen aan hun eigenschappen: aantal zijden, gelijke zijden, rechte hoeken. Bij spiegelen wisselen links en rechts. Bij draaien blijft de vorm gelijk maar verandert de oriëntatie.",
+    voorbeeld: "Voorbeeld: een rechthoek heeft 4 zijden, 4 rechte hoeken, tegenoverliggende zijden zijn gelijk.",
+    vragen: [
+      ["Hoeveel hoeken heeft een zeshoek?", "6"],
+      ["Welke vorm heeft 4 gelijke zijden EN 4 rechte hoeken?", "Vierkant"],
+      ["Een figuur wordt gespiegeld over een verticale as. Wat verandert er?", "Links en rechts wisselen"],
+      ["Een vierkant wordt 90° gedraaid. Wat zie je?", "Weer een vierkant — het ziet er hetzelfde uit"],
+      ["Een kubus heeft vlakken, ribben en hoekpunten. Hoeveel ribben heeft een kubus?", "12"],
+      ["Plattegrond schaal 1:50. Een kamer is 4 × 3 cm op de tekening. Hoe groot is de kamer echt in meters?", "2 m × 1,5 m (want 4×50=200 cm=2 m, 3×50=150 cm=1,5 m)"],
+    ]
+  },
+
+  // ══════════════════════════════════════════════
+  // DOMEIN 4 — VERBANDEN
+  // ══════════════════════════════════════════════
+
+  "4.1": {
+    domein: "4", domeinNaam: "Verbanden", subNaam: "Tabellen lezen",
+    uitleg: "Lees tabellen rij voor rij. Totaal = alle waarden optellen. Gemiddelde = totaal ÷ aantal. Combineer waarden uit twee rijen door te vermenigvuldigen of te vergelijken.",
+    voorbeeld: "Voorbeeld: ma=12, di=8, wo=15, do=10, vr=5. Totaal = 50. Gemiddelde = 50 ÷ 5 = 10.",
+    vragen: [
+      ["Tabel: ma=12, di=8, wo=15, do=10, vr=5. Wat is het totaal?", "50"],
+      ["Dezelfde tabel. Wat is het gemiddelde per dag?", "10"],
+      ["Prijs per stuk: €3,50. Aantal: 12. Wat is de totaalprijs?", "€42"],
+      ["Tabel toont verkopen: jan=245, feb=312, mrt=198. Wat is het totaal?", "755"],
+      ["Gemiddelde van jan t/m mrt uit vorige vraag. Afgerond op hele getallen?", "252"],
+      ["Tabel: kind A loopt 3,2 km, kind B 4,1 km, kind C 2,7 km. Wie loopt samen meer dan 7 km?", "A + B = 7,3 km — dat zijn kind A en kind B"],
+    ]
+  },
+
+  "4.2": {
+    domein: "4", domeinNaam: "Verbanden", subNaam: "Grafieken lezen",
+    uitleg: "Lees een grafiek van links naar rechts. Gebruik de assen om waarden af te lezen. Trek een denkbeeldige lijn omhoog naar de grafiek, dan horizontaal naar de y-as.",
+    voorbeeld: "Voorbeeld: om 8:00 is het 12°C, om 14:00 is het 22°C. Stijging = 22 − 12 = 10°C.",
+    vragen: [
+      ["Lijngrafiek: 8:00 = 12°C, 14:00 = 22°C. Hoeveel graden steeg de temperatuur?", "10°C"],
+      ["In een staafgrafiek staat elke 10 leerlingen gelijk aan 2 vakjes. Een staaf heeft 7 vakjes. Hoeveel leerlingen?", "35 leerlingen (7 ÷ 2 × 10 = 35)"],
+      ["Een grafiek toont dat de verkoop van maandag op dinsdag daalt van 80 naar 65. Hoeveel procent daling?", "18,75% (≈ 19%)"],
+      ["Lijngrafiek toont bevolking: 2010=1.200, 2020=1.450. Hoeveel groei in 10 jaar?", "250 mensen"],
+      ["Een staafgrafiek toont: school A=240, school B=185, school C=310. Welke twee scholen samen komen het dichtst bij 500?", "A + B = 425, A + C = 550, B + C = 495 → B en C"],
+      ["Reeks: jan=10, feb=14, mrt=18, apr=22. De reeks groeit elke maand met hetzelfde getal. Wat verwacht je in mei?", "26 (elke maand +4, dus 22+4=26)"],
+    ]
+  },
+
+  "4.3": {
+    domein: "4", domeinNaam: "Verbanden", subNaam: "Patronen en reeksen",
+    uitleg: "Zoek de vaste regel: elke stap optellen (+), aftrekken (−), vermenigvuldigen (×) of delen (÷). Als je de regel weet, bereken je elk getal direct zonder alles op te tellen.",
+    voorbeeld: "Voorbeeld: 3, 7, 11, 15 → elke stap +4. Het 10e getal: 3 + 9 × 4 = 39.",
+    vragen: [
+      ["Rij: 5, 10, 15, 20 ... Wat is het 8e getal?", "40"],
+      ["Rij: 100, 93, 86, 79 ... Wat is het volgende getal?", "72"],
+      ["Rij: 3, 7, 11, 15 ... Wat is het 10e getal?", "39"],
+      ["Rij: 2, 6, 18, 54 ... Wat is het 6e getal in deze rij?", "486 (elke stap ×3: 2→6→18→54→162→486)"],
+      ["Rij: 1, 4, 9, 16, 25 ... Wat is het 7e getal?", "49 (dit zijn kwadraten: 1², 2², 3²...)"],
+      ["Rij: 80, 40, 20, 10 ... Hoeveel stappen duurt het tot je onder de 1 komt?", "Na 7 stappen: 80→40→20→10→5→2,5→1,25→0,625"],
+    ]
+  },
+
+  "4.4": {
+    domein: "4", domeinNaam: "Verbanden", subNaam: "Functionele verbanden",
+    uitleg: "Een formule beschrijft een verband tussen twee grootheden. Vul in wat je weet en bereken wat je zoekt. Schrijf de formule altijd eerst op.",
+    voorbeeld: "Voorbeeld: taxi kost €2,50 + €1,20 per km. Voor 8 km: €2,50 + 8 × €1,20 = €12,10.",
+    vragen: [
+      ["Formule: P = 4 × z. Omtrek vierkant met zijde 7 cm?", "28 cm"],
+      ["Taxi: €2,50 + €1,20/km. Kosten voor 8 km?", "€12,10"],
+      ["Kosten = €3 × n + €5. Kosten bij n = 8?", "€29"],
+      ["Afstand = snelheid × tijd. Afstand bij 60 km/u gedurende 2,5 uur?", "150 km"],
+      ["Formule: prijs = 5 × aantal + 3. Voor hoeveel stuks betaal je precies €48?", "9 stuks (5×9+3 = 48)"],
+      ["Een bad vult zich met 12 liter per minuut. Formule voor de inhoud na t minuten. Hoeveel liter na 7,5 minuten?", "Inhoud = 12 × t. Na 7,5 min: 90 liter"],
+    ]
+  },
+
+  "4.5": {
+    domein: "4", domeinNaam: "Verbanden", subNaam: "Gemiddelde en totaal",
+    uitleg: "Gemiddelde = som van alle waarden ÷ aantal waarden. Totaal = gemiddelde × aantal. Als je het gemiddelde weet en één waarde mist, bereken je die waarde via: ontbrekend = totaal − som van bekende waarden.",
+    voorbeeld: "Voorbeeld: gem. van 4 getallen is 12. Drie zijn 10, 14, 11. Totaal = 48. Vierde = 48 − 35 = 13.",
+    vragen: [
+      ["Gemiddelde van: 8, 6, 9, 7, 5", "7"],
+      ["Lisa heeft cijfers: 7, 8, 6, 9, 5. Wat is haar gemiddelde?", "7,0"],
+      ["Gem. van 4 getallen is 12. Drie zijn: 10, 14, 11. Wat is het vierde getal?", "13"],
+      ["Vijf kinderen meten: 142, 138, 145, 140, 135 cm. Wat is de gemiddelde lengte?", "140 cm"],
+      ["Vier toetsen: 7, 8, 6, ?. Gemiddelde moet 7,5 zijn. Wat moet de vierde toets zijn?", "9"],
+      ["Een team scoort gemiddeld 3,4 doelpunten per wedstrijd over 5 wedstrijden. Hoeveel doelpunten in totaal?", "17"],
+    ]
+  },
+
+};
+
+
+const ADVIES={
+  "1.1":"Oefen plaatswaarde met grote getallen. Schrijf getallen in woorden en terug. Gebruik een plaatswaardentabel.",
+  "1.2":"Zet kommagetallen altijd op gelijke lengte voor je vergelijkt: 3,7 = 3,70. Zet breuken om naar decimalen.",
+  "1.3":"Leer de afrondingsregel uit je hoofd: 5 of meer = omhoog, minder dan 5 = blijven. Oefen schatten bij elk rekenvraagstuk.",
+  "1.4":"Gebruik handige tussenstappen. Zoek naar getallendie samen 10, 100 of 1.000 maken.",
+  "1.5":"Oefen het verschuiven van de komma. × 10 = één plaats rechts. × 100 = twee plaatsen rechts.",
+  "1.6":"Leer de basisomzettingen uit je hoofd: 1/4=25%, 1/2=50%, 3/4=75%, 1/5=20%, 1/10=10%.",
+  "2.1":"Oefen breuken van hoeveelheden: deel door de noemer, vermenigvuldig met de teller.",
+  "2.2":"Onthoud: 10% = deel door 10. 25% = deel door 4. 50% = deel door 2. Bouw grotere percentages hieruit op.",
+  "2.3":"Maak altijd eerst een tabel met de waarde per 1 eenheid. Dan schaal je op of af.",
+  "2.4":"Schrijf de schaal altijd op als breuk: 1:100 = 1 cm staat voor 100 cm. Vermenigvuldig of deel consequent.",
+  "2.5":"Tel alle verhoudingsdelen op, bereken 1 deel, vermenigvuldig per persoon of groep.",
+  "3.1":"Zet eenheden altijd om naar dezelfde eenheid voor je optelt. Omtrek = alle zijden bij elkaar.",
+  "3.2":"Onthoud: 1 kg = 1.000 g. 1 liter = 1.000 ml. Zet altijd om voor je berekent.",
+  "3.3":"Tel minuten op tot het volgende hele uur, dan de resterende uren. Schrijf tussentijden op.",
+  "3.4":"Zet bedragen netjes onder elkaar met de komma op dezelfde plek. Wisselgeld = betaald − kosten.",
+  "3.5":"Oppervlakte rechthoek = l × b. Driehoek = (g × h) ÷ 2. Schrijf de eenheid (cm², m²) altijd erbij.",
+  "3.6":"Herken vormen aan zijden en hoeken. Bij spiegelen wisselen links en rechts. Teken altijd als hulp.",
+  "4.1":"Lees tabellen rij voor rij. Totaal = alles optellen. Gemiddelde = totaal ÷ aantal.",
+  "4.2":"Trek een lijn omhoog naar de grafiek, dan horizontaal naar de y-as. Noteer de waarden voor je berekent.",
+  "4.3":"Schrijf de regel op als je hem gevonden hebt. Dan bereken je elk getal direct: startgetal + (n−1) × stap.",
+  "4.4":"Schrijf de formule altijd eerst op. Vul daarna in wat je weet. Bereken stap voor stap.",
+  "4.5":"Gemiddelde = som ÷ aantal. Ontbrekende waarde = (gemiddelde × aantal) − som van de bekende waarden.",
+};
+
+async function genereerWerkboek(){
+  const btn=document.getElementById('genereer-btn');
+  const status=document.getElementById('genereer-status');
+  const tekstEl=document.getElementById('genereer-tekst');
+
+  btn.disabled=true; status.classList.add('actief');
+
+  // Bepaal zwakke subonderwerpen
+  const zwakSubs=Object.entries(subScores)
+    .filter(([k,v])=>v.goed/v.totaal<1)
+    .sort((a,b)=>(a[1].goed/a[1].totaal)-(b[1].goed/b[1].totaal))
+    .slice(0,6)
+    .map(([k])=>k);
+
+  const oefenSubs=zwakSubs.length>0?zwakSubs:Object.keys(subScores).slice(0,4);
+  const oefenMetData=oefenSubs.filter(s=>OEFENDATA[s]);
+
+  tekstEl.textContent='Aandachtspunten worden bepaald...';
+  await new Promise(r=>setTimeout(r,500));
+  tekstEl.textContent='Oefenvragen worden samengesteld...';
+  await new Promise(r=>setTimeout(r,500));
+  tekstEl.textContent='Werkboek wordt opgemaakt...';
+  await new Promise(r=>setTimeout(r,400));
+
+  const datum=new Date().toLocaleDateString('nl-NL',{day:'numeric',month:'long',year:'numeric'});
+  let antwoordenLijst={};
+  oefenMetData.forEach(s=>antwoordenLijst[s]=[]);
+
+  // Bouw score tabel
+  const domGroepen={};
+  Object.entries(subScores).forEach(([sub,s])=>{
+    if(!domGroepen[s.dom]) domGroepen[s.dom]={domein:s.domein,subs:[]};
+    domGroepen[s.dom].subs.push({sub,...s});
+  });
+
+  let scoreTabel='';
+  ["1","2","3","4"].forEach(d=>{
+    const g=domGroepen[d];
+    if(!g)return;
+    g.subs.forEach(s=>{
+      const pct=Math.round(s.goed/s.totaal*100);
+      scoreTabel+=`<tr><td>${s.sub} ${s.subNaam}</td><td style="text-align:center">${s.goed}/${s.totaal}</td><td style="font-weight:600;color:${pct>=75?'#16A34A':'#DC2626'};text-align:center">${pct>=75?'Sterk':'Oefenen'}</td></tr>`;
+    });
+  });
+
+  let html=`<div class="wb-footer">RekenCheck Groep 7 · Werkboek voor ${naamKind} · ${datum}</div>
+  <div class="wb-pagina">
+    <div class="wb-header"><div class="wb-header-logo">Reken<span>Check</span></div><div class="wb-header-info">Persoonlijk werkboek · Groep 7 · 22 onderwerpen</div></div>
+    <div class="wb-titel-blok"><h1>Persoonlijk<br>Werkboek</h1><div class="wb-naam">Voor: <strong>${naamKind}</strong></div><div class="wb-datum">${datum}</div></div>
+    <p style="font-family:sans-serif;font-size:8pt;font-weight:600;color:#6B7280;margin:0.5cm 0 0.2cm;text-transform:uppercase;letter-spacing:0.05em;">Resultaten per subonderwerp</p>
+    <table class="wb-score-tabel"><tr><th>Subonderwerp</th><th style="text-align:center">Score</th><th style="text-align:center">Niveau</th></tr>${scoreTabel}</table>
+    <p style="font-family:sans-serif;font-size:9pt;color:#6B7280;margin-top:0.5cm;line-height:1.6;">Dit werkboek richt zich op de subonderwerpen waar jij nog kunt groeien. Per onderdeel vind je uitleg, een voorbeeld en oefenvragen. De antwoorden staan achterin.</p>
+  </div>`;
+
+  // Oefenpagina's
+  oefenMetData.forEach(subKey=>{
+    const blok=OEFENDATA[subKey];
+    const sc=subScores[subKey];
+    let nr=1;
+    html+=`<div class="wb-pagina">
+      <div class="wb-header"><div class="wb-header-logo">Reken<span>Check</span></div><div class="wb-header-info">${naamKind} · ${subKey} ${sc.subNaam}</div></div>
+      <div class="wb-domein-header"><div class="wb-domein-naam">${subKey} ${sc.subNaam}</div><div class="wb-domein-score">${ADVIES[subKey]||ADVIES[sc.dom]}</div></div>
+      <div class="wb-blok-header">${blok.titel}</div>
+      <div class="wb-theorie"><strong>Uitleg:</strong> ${blok.theorie}</div>
+      <div class="wb-voorbeeld">${blok.voorbeeld}</div>`;
+
+    blok.vragen.forEach(([vraag,antwoord])=>{
+      antwoordenLijst[subKey].push({nr,vraag,antwoord});
+      html+=`<div class="wb-vraag">${nr}. ${vraag}</div><div class="wb-antwoord-label">Mijn antwoord:</div><div class="wb-antwoord-lijn"></div>`;
+      nr++;
+    });
+    html+=`</div>`;
+  });
+
+  // Antwoorden
+  html+=`<div class="wb-pagina">
+    <div class="wb-header"><div class="wb-header-logo">Reken<span>Check</span></div><div class="wb-header-info">Antwoorden</div></div>
+    <h2 style="font-family:sans-serif;font-size:18pt;font-weight:700;margin-bottom:0.15cm;">Antwoorden</h2>
+    <p style="font-family:sans-serif;font-size:8.5pt;color:#9CA3AF;margin-bottom:0.5cm;font-style:italic;">Controleer pas nadat je alle vragen hebt gemaakt.</p>`;
+
+  oefenMetData.forEach(subKey=>{
+    const lijst=antwoordenLijst[subKey];
+    const sc=subScores[subKey];
+    if(!lijst.length)return;
+    html+=`<p style="font-family:sans-serif;font-size:10pt;font-weight:700;color:#2563EB;margin:0.4cm 0 0.2cm;">${subKey} ${sc.subNaam}</p>
+      <table class="wb-antwoord-tabel"><tr><th>Nr.</th><th>Vraag</th><th>Antwoord</th></tr>
+      ${lijst.map(({nr,vraag,antwoord})=>{
+        const k=vraag.length>60?vraag.slice(0,60)+'...':vraag;
+        return `<tr><td>${nr}</td><td>${k}</td><td style="font-weight:600;color:#2563EB">${antwoord}</td></tr>`;
+      }).join('')}</table>`;
+  });
+  html+=`</div>`;
+
+  document.getElementById('werkboek-container').innerHTML=html;
+  status.classList.remove('actief');
+  btn.style.display='none';
+  document.getElementById('print-btn').style.display='inline-flex';
+}
+</script>
+
+</body>
+</html>

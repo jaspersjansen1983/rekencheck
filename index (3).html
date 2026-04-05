@@ -1,0 +1,490 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>RekenCheck — Gratis rekencheck voor groep 7 en 8</title>
+  <meta name="description" content="Krijg inzicht in de rekenontwikkeling van jouw kind. Gratis rekencheck van 22 vragen. Persoonlijk oefenboek voor €24,95." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Lora:wght@400;500&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --achtergrond: #F8F5EE;
+      --wit:         #FFFFFF;
+      --inkt:        #1C1C1E;
+      --accent:      #2563EB;
+      --accent-d:    #1D4ED8;
+      --accent-l:    #EFF4FF;
+      --goed:        #16A34A;
+      --goed-l:      #F0FDF4;
+      --grijs-1:     #F3F4F6;
+      --grijs-2:     #E5E7EB;
+      --grijs-3:     #9CA3AF;
+      --grijs-4:     #6B7280;
+      --font-hoofd:  'Plus Jakarta Sans', sans-serif;
+      --font-tekst:  'Lora', Georgia, serif;
+      --schaduw-s:   0 1px 3px rgba(0,0,0,0.06), 0 2px 8px rgba(0,0,0,0.04);
+      --schaduw-m:   0 2px 8px rgba(0,0,0,0.07), 0 8px 24px rgba(0,0,0,0.05);
+      --radius:      16px;
+      --max:         1100px;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body { font-family: var(--font-hoofd); background: var(--achtergrond); color: var(--inkt); -webkit-font-smoothing: antialiased; }
+
+    /* NAV */
+    nav { position: sticky; top: 0; z-index: 100; background: rgba(248,245,238,0.95); backdrop-filter: blur(8px); border-bottom: 1px solid var(--grijs-2); }
+    .nav-inner { max-width: var(--max); margin: 0 auto; padding: 0 2rem; height: 64px; display: flex; align-items: center; justify-content: space-between; }
+    .logo { font-weight: 800; font-size: 1.15rem; color: var(--inkt); text-decoration: none; letter-spacing: -0.02em; }
+    .logo span { color: var(--accent); }
+    .nav-links { display: flex; align-items: center; gap: 2rem; list-style: none; }
+    .nav-links a { text-decoration: none; color: var(--grijs-4); font-size: 0.9rem; font-weight: 500; transition: color 0.15s; }
+    .nav-links a:hover { color: var(--inkt); }
+    .nav-cta { background: var(--accent) !important; color: white !important; padding: 0.55rem 1.2rem !important; border-radius: 8px !important; font-weight: 600 !important; font-size: 0.88rem !important; }
+    .nav-cta:hover { background: var(--accent-d) !important; }
+
+    /* KNOPPEN */
+    .btn { display: inline-flex; align-items: center; justify-content: center; gap: 0.4rem; font-family: var(--font-hoofd); font-weight: 700; font-size: 1rem; padding: 0.85rem 2rem; border-radius: 10px; border: none; cursor: pointer; text-decoration: none; transition: all 0.15s; line-height: 1; }
+    .btn-primair { background: var(--accent); color: white; box-shadow: 0 2px 8px rgba(37,99,235,0.3); }
+    .btn-primair:hover { background: var(--accent-d); transform: translateY(-1px); box-shadow: 0 4px 16px rgba(37,99,235,0.35); }
+    .btn-groot { font-size: 1.1rem; padding: 1rem 2.4rem; }
+
+    /* SECTIES */
+    section { padding: 5rem 2rem; }
+    .container { max-width: var(--max); margin: 0 auto; }
+    .sectie-label { font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; color: var(--accent); margin-bottom: 0.6rem; }
+    h2 { font-size: clamp(1.75rem, 3.5vw, 2.5rem); font-weight: 800; color: var(--inkt); line-height: 1.2; letter-spacing: -0.02em; margin-bottom: 1rem; }
+    .sectie-intro { font-family: var(--font-tekst); font-size: 1.05rem; color: var(--grijs-4); line-height: 1.7; max-width: 52ch; margin-bottom: 3rem; }
+
+    /* HERO */
+    #hero { background: var(--wit); padding: 5rem 2rem 4rem; border-bottom: 1px solid var(--grijs-2); }
+    .hero-inner { max-width: var(--max); margin: 0 auto; display: grid; grid-template-columns: 1fr 1fr; gap: 4rem; align-items: center; }
+    .hero-badge { display: inline-flex; align-items: center; gap: 0.4rem; background: var(--accent-l); color: var(--accent); font-size: 0.78rem; font-weight: 700; padding: 0.35rem 0.9rem; border-radius: 100px; margin-bottom: 1.2rem; }
+    h1 { font-size: clamp(2.2rem, 4.5vw, 3.4rem); font-weight: 800; line-height: 1.1; letter-spacing: -0.03em; color: var(--inkt); margin-bottom: 1.2rem; }
+    h1 em { font-style: normal; color: var(--accent); }
+    .hero-sub { font-family: var(--font-tekst); font-size: 1.1rem; color: var(--grijs-4); line-height: 1.7; margin-bottom: 2rem; max-width: 46ch; }
+    .hero-note { font-size: 0.8rem; color: var(--grijs-3); margin-top: 0.8rem; }
+    .hero-vertrouwen { display: flex; align-items: center; gap: 1.5rem; flex-wrap: wrap; margin-top: 1.5rem; }
+    .v-item { display: flex; align-items: center; gap: 0.4rem; font-size: 0.82rem; color: var(--grijs-4); font-weight: 500; }
+    .v-item span { color: var(--goed); }
+
+    /* HERO KAART */
+    .hero-kaart { background: var(--inkt); border-radius: 24px; padding: 2.5rem; color: white; position: relative; overflow: hidden; animation: fadeUp 0.6s 0.15s ease both; }
+    .hero-kaart::before { content: ''; position: absolute; top: -80px; right: -80px; width: 240px; height: 240px; background: var(--accent); border-radius: 50%; opacity: 0.12; }
+    .kaart-stap { display: flex; align-items: flex-start; gap: 1rem; margin-bottom: 1.4rem; }
+    .kaart-stap:last-of-type { margin-bottom: 0; }
+    .stap-nr { width: 32px; height: 32px; background: var(--accent); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 0.85rem; flex-shrink: 0; }
+    .stap-tekst strong { display: block; font-size: 0.95rem; margin-bottom: 0.15rem; }
+    .stap-tekst p { font-size: 0.82rem; color: rgba(255,255,255,0.55); line-height: 1.5; }
+    .kaart-divider { border: none; border-top: 1px solid rgba(255,255,255,0.1); margin: 1.6rem 0; }
+    .prijs-gratis { background: var(--goed); color: white; font-size: 0.75rem; font-weight: 700; padding: 0.25rem 0.65rem; border-radius: 100px; }
+    .prijs-scan { font-size: 0.85rem; color: rgba(255,255,255,0.55); }
+    .prijs-boek { font-size: 1.8rem; font-weight: 800; }
+    .prijs-boek-label { font-size: 0.82rem; color: rgba(255,255,255,0.55); }
+
+    /* HOE HET WERKT */
+    #hoe { background: var(--achtergrond); }
+    .stappen-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 1.5rem; }
+    .stap-kaart { background: var(--wit); border: 1px solid var(--grijs-2); border-radius: var(--radius); padding: 2rem; box-shadow: var(--schaduw-s); }
+    .stap-nummer { font-size: 3rem; font-weight: 800; color: var(--grijs-2); line-height: 1; margin-bottom: 0.8rem; }
+    .stap-kaart h3 { font-size: 1.1rem; font-weight: 700; margin-bottom: 0.5rem; }
+    .stap-kaart p { font-family: var(--font-tekst); font-size: 0.9rem; color: var(--grijs-4); line-height: 1.65; }
+
+    /* VOORDELEN */
+    #voordelen { background: var(--wit); border-top: 1px solid var(--grijs-2); border-bottom: 1px solid var(--grijs-2); }
+    .voordelen-grid { display: grid; grid-template-columns: repeat(2,1fr); gap: 1.2rem; }
+    .voordeel { display: flex; gap: 1rem; align-items: flex-start; padding: 1.4rem; background: var(--achtergrond); border-radius: var(--radius); border: 1px solid var(--grijs-2); }
+    .voordeel-icon { width: 40px; height: 40px; background: var(--accent-l); border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; flex-shrink: 0; }
+    .voordeel h3 { font-size: 0.95rem; font-weight: 700; margin-bottom: 0.3rem; }
+    .voordeel p { font-family: var(--font-tekst); font-size: 0.85rem; color: var(--grijs-4); line-height: 1.6; }
+
+    /* PRODUCT */
+    #product { background: var(--achtergrond); }
+    .product-inner { display: grid; grid-template-columns: 1fr 1fr; gap: 4rem; align-items: center; }
+    .product-preview { background: var(--wit); border: 1px solid var(--grijs-2); border-radius: 20px; padding: 2rem; box-shadow: var(--schaduw-m); }
+    .preview-header { background: var(--inkt); border-radius: 12px; padding: 1.2rem 1.5rem; margin-bottom: 1.2rem; display: flex; justify-content: space-between; align-items: center; }
+    .preview-logo { color: white; font-weight: 800; font-size: 1rem; }
+    .preview-logo span { color: #60A5FA; }
+    .preview-datum { font-size: 0.75rem; color: rgba(255,255,255,0.4); }
+    .preview-naam { font-size: 1.1rem; font-weight: 700; margin-bottom: 0.3rem; }
+    .preview-sub { font-size: 0.8rem; color: var(--grijs-3); margin-bottom: 1.2rem; }
+    .preview-blokken { display: flex; flex-direction: column; gap: 0.6rem; }
+    .preview-blok { background: var(--achtergrond); border-radius: 10px; padding: 0.8rem 1rem; border-left: 3px solid var(--accent); }
+    .preview-blok strong { display: block; margin-bottom: 0.15rem; font-size: 0.85rem; font-weight: 700; }
+    .preview-blok p { color: var(--grijs-4); font-size: 0.78rem; font-family: var(--font-tekst); }
+    .preview-footer { margin-top: 1rem; padding-top: 1rem; border-top: 1px solid var(--grijs-2); display: flex; align-items: center; justify-content: space-between; }
+    .preview-badge { background: var(--goed-l); color: var(--goed); font-size: 0.72rem; font-weight: 700; padding: 0.25rem 0.65rem; border-radius: 100px; }
+    .preview-paginas { font-size: 0.78rem; color: var(--grijs-3); }
+    .product-lijst { list-style: none; display: flex; flex-direction: column; gap: 0.8rem; margin-bottom: 2rem; }
+    .product-lijst li { display: flex; align-items: flex-start; gap: 0.7rem; font-family: var(--font-tekst); font-size: 0.95rem; color: var(--grijs-4); line-height: 1.5; }
+    .product-lijst li::before { content: '✓'; color: var(--goed); font-weight: 700; font-family: var(--font-hoofd); flex-shrink: 0; margin-top: 0.1rem; }
+    .prijs-blok { background: var(--achtergrond); border: 1px solid var(--grijs-2); border-radius: var(--radius); padding: 1.5rem; margin-bottom: 1.2rem; }
+    .prijs-groot { font-size: 2.2rem; font-weight: 800; color: var(--inkt); }
+    .prijs-vergelijk-tekst { font-size: 0.85rem; color: var(--grijs-3); }
+    .prijs-nota { font-size: 0.8rem; color: var(--grijs-3); margin-top: 0.3rem; }
+
+    /* GRATIS */
+    #gratis { background: var(--inkt); color: white; text-align: center; }
+    #gratis h2 { color: white; }
+    #gratis .sectie-intro { color: rgba(255,255,255,0.6); margin-left: auto; margin-right: auto; }
+    .gratis-kaarten { display: grid; grid-template-columns: repeat(3,1fr); gap: 1rem; margin-bottom: 3rem; }
+    .gratis-kaart { background: rgba(255,255,255,0.07); border: 1px solid rgba(255,255,255,0.1); border-radius: var(--radius); padding: 1.5rem; text-align: left; }
+    .gratis-kaart .icon { font-size: 1.8rem; margin-bottom: 0.8rem; display: block; }
+    .gratis-kaart h3 { font-size: 0.95rem; font-weight: 700; margin-bottom: 0.4rem; }
+    .gratis-kaart p { font-size: 0.82rem; color: rgba(255,255,255,0.5); line-height: 1.6; }
+
+    /* FAQ */
+    #faq { background: var(--wit); border-top: 1px solid var(--grijs-2); }
+    .faq-lijst { max-width: 700px; }
+    .faq-item { border-bottom: 1px solid var(--grijs-2); padding: 1.2rem 0; }
+    .faq-item:first-child { border-top: 1px solid var(--grijs-2); }
+    .faq-vraag { font-weight: 700; font-size: 1rem; cursor: pointer; display: flex; justify-content: space-between; align-items: center; gap: 1rem; user-select: none; }
+    .faq-pijl { transition: transform 0.2s; color: var(--grijs-3); flex-shrink: 0; }
+    .faq-item.open .faq-pijl { transform: rotate(180deg); }
+    .faq-antwoord { display: none; font-family: var(--font-tekst); font-size: 0.95rem; color: var(--grijs-4); line-height: 1.7; padding-top: 0.8rem; }
+    .faq-item.open .faq-antwoord { display: block; }
+
+    /* VERTROUWEN */
+    #vertrouwen { background: var(--achtergrond); }
+    .vertrouwen-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 1.2rem; }
+    .vertrouwen-kaart { background: var(--wit); border: 1px solid var(--grijs-2); border-radius: var(--radius); padding: 1.8rem; box-shadow: var(--schaduw-s); }
+    .vertrouwen-kaart h3 { font-size: 0.9rem; font-weight: 700; margin-bottom: 0.5rem; }
+    .vertrouwen-kaart p { font-family: var(--font-tekst); font-size: 0.85rem; color: var(--grijs-4); line-height: 1.65; }
+    .vertrouwen-icon { font-size: 1.5rem; margin-bottom: 0.8rem; display: block; }
+
+    /* CTA BANNER */
+    #cta-banner { background: var(--accent); color: white; text-align: center; padding: 4rem 2rem; }
+    #cta-banner h2 { color: white; margin-bottom: 0.6rem; }
+    #cta-banner p { color: rgba(255,255,255,0.75); font-family: var(--font-tekst); font-size: 1rem; margin-bottom: 2rem; }
+
+    /* FOOTER */
+    footer { background: var(--inkt); color: rgba(255,255,255,0.45); padding: 2.5rem 2rem; }
+    .footer-inner { max-width: var(--max); margin: 0 auto; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 1rem; }
+    .footer-logo { color: white; font-weight: 700; font-size: 1rem; }
+    .footer-logo span { color: #60A5FA; }
+    .footer-links { display: flex; gap: 1.5rem; flex-wrap: wrap; }
+    .footer-links a { color: rgba(255,255,255,0.45); text-decoration: none; font-size: 0.82rem; transition: color 0.15s; }
+    .footer-links a:hover { color: white; }
+    .footer-copy { font-size: 0.78rem; }
+
+    @keyframes fadeUp { from { opacity:0; transform:translateY(16px); } to { opacity:1; transform:translateY(0); } }
+    .hero-tekst { animation: fadeUp 0.6s ease both; }
+    .hero-kaart { animation: fadeUp 0.6s 0.15s ease both; }
+
+    @media (max-width: 768px) {
+      .hero-inner, .product-inner { grid-template-columns: 1fr; gap: 2rem; }
+      .hero-kaart { order: -1; }
+      .stappen-grid, .gratis-kaarten, .vertrouwen-grid { grid-template-columns: 1fr; }
+      .voordelen-grid { grid-template-columns: 1fr; }
+      .nav-links { display: none; }
+      section { padding: 3.5rem 1.2rem; }
+      #hero { padding: 3rem 1.2rem; }
+    }
+  </style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-inner">
+    <a class="logo" href="#">Reken<span>Check</span></a>
+    <ul class="nav-links">
+      <li><a href="#hoe">Hoe het werkt</a></li>
+      <li><a href="#product">Het oefenboek</a></li>
+      <li><a href="#faq">Vragen</a></li>
+      <li><a href="quiz.html" class="nav-cta">Start gratis check →</a></li>
+    </ul>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section id="hero">
+  <div class="hero-inner">
+    <div class="hero-tekst">
+      <div class="hero-badge">📊 Groep 7 en 8 · Rekenen</div>
+      <h1>Inzicht in de <em>rekenontwikkeling</em> van jouw kind</h1>
+      <p class="hero-sub">Gratis rekencheck van 15 minuten. Duidelijk inzicht per onderwerp. Persoonlijk oefenboek dat gericht helpt — voor minder dan één uur bijles.</p>
+      <a href="quiz.html" class="btn btn-primair btn-groot">Start gratis rekencheck →</a>
+      <p class="hero-note">Geen account nodig · Resultaat direct zichtbaar</p>
+      <div class="hero-vertrouwen">
+        <div class="v-item"><span>✓</span> Gratis intake</div>
+        <div class="v-item"><span>✓</span> Gebaseerd op IEP-leerlijnen</div>
+        <div class="v-item"><span>✓</span> AVG-proof</div>
+      </div>
+    </div>
+
+    <div class="hero-kaart">
+      <div class="kaart-stap">
+        <div class="stap-nr">1</div>
+        <div class="stap-tekst">
+          <strong>Doe de gratis rekencheck</strong>
+          <p>22 vragen · alle rekenonderwerpen · ~15 minuten</p>
+        </div>
+      </div>
+      <div class="kaart-stap">
+        <div class="stap-nr">2</div>
+        <div class="stap-tekst">
+          <strong>Zie per onderwerp waar oefening helpt</strong>
+          <p>Score per deelonderwerp · inzicht in de ontwikkeling</p>
+        </div>
+      </div>
+      <div class="kaart-stap">
+        <div class="stap-nr">3</div>
+        <div class="stap-tekst">
+          <strong>Ontvang het persoonlijk oefenboek</strong>
+          <p>Gericht op de groeipunten van jouw kind · direct afdrukken</p>
+        </div>
+      </div>
+      <hr class="kaart-divider" />
+      <div style="display:flex; align-items:center; gap:0.6rem; margin-bottom:0.4rem;">
+        <span class="prijs-gratis">GRATIS</span>
+        <span class="prijs-scan">de rekencheck</span>
+      </div>
+      <div style="display:flex; align-items:baseline; gap:0.5rem;">
+        <span class="prijs-boek">€24,95</span>
+        <span class="prijs-boek-label">het persoonlijk oefenboek</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- HOE HET WERKT -->
+<section id="hoe">
+  <div class="container">
+    <p class="sectie-label">In drie stappen</p>
+    <h2>Van scan naar oefenboek</h2>
+    <p class="sectie-intro">Geen ingewikkeld systeem. Geen account. Gewoon doen wat werkt.</p>
+    <div class="stappen-grid">
+      <div class="stap-kaart">
+        <div class="stap-nummer">01</div>
+        <h3>Doe de gratis rekencheck</h3>
+        <p>Jouw kind maakt 22 rekenvragen. We dekken alle onderwerpen van groep 7 en 8: getallen, verhoudingen, meten en verbanden. Duurt ongeveer 15 minuten.</p>
+      </div>
+      <div class="stap-kaart">
+        <div class="stap-nummer">02</div>
+        <h3>Zie per onderwerp waar oefening helpt</h3>
+        <p>Direct na de scan zie je een overzicht per deelonderwerp. Wat gaat goed? Waar zit de moeite? Helder en in gewone taal, zonder technisch jargon.</p>
+      </div>
+      <div class="stap-kaart">
+        <div class="stap-nummer">03</div>
+        <h3>Oefen gericht met het oefenboek</h3>
+        <p>Op basis van de uitslag ontvang je een persoonlijk oefenboek. Gericht op de onderdelen waar extra oefening helpt. Direct afdrukken en aan de slag.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- VOORDELEN -->
+<section id="voordelen">
+  <div class="container">
+    <p class="sectie-label">Waarom RekenCheck</p>
+    <h2>Niet nog een oefensite</h2>
+    <p class="sectie-intro">RekenCheck werkt anders. Niet generiek oefenen op wat toevallig in een app zit, maar gericht oefenen op wat jouw kind nodig heeft.</p>
+    <div class="voordelen-grid">
+      <div class="voordeel">
+        <div class="voordeel-icon">🎯</div>
+        <div>
+          <h3>Persoonlijk, niet generiek</h3>
+          <p>Het oefenboek is gebaseerd op de resultaten van jouw kind. Niet op wat een algoritme denkt dat handig is.</p>
+        </div>
+      </div>
+      <div class="voordeel">
+        <div class="voordeel-icon">📐</div>
+        <div>
+          <h3>Gebaseerd op Nederlandse leerlijnen</h3>
+          <p>Alle vragen sluiten aan op de IEP-toets en de doorstroomtoets. Precies wat op school gevraagd wordt.</p>
+        </div>
+      </div>
+      <div class="voordeel">
+        <div class="voordeel-icon">🏠</div>
+        <div>
+          <h3>Thuis, op jouw moment</h3>
+          <p>Geen afspraken, geen reistijd. Scan vandaag, oefenboek vanavond afdrukken, morgen beginnen.</p>
+        </div>
+      </div>
+      <div class="voordeel">
+        <div class="voordeel-icon">💶</div>
+        <div>
+          <h3>Veel goedkoper dan bijles</h3>
+          <p>Eén uur bijles kost al snel €30 tot €50. RekenCheck kost €24,95 en je kind kan er weken mee oefenen.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PRODUCT -->
+<section id="product">
+  <div class="container">
+    <div class="product-inner">
+      <div class="product-preview">
+        <div class="preview-header">
+          <span class="preview-logo">Reken<span>Check</span></span>
+          <span class="preview-datum">Persoonlijk werkboek</span>
+        </div>
+        <div class="preview-naam">Werkboek voor Sophie</div>
+        <div class="preview-sub">Groep 7 · Groeipunten: Verhoudingen en Meten</div>
+        <div class="preview-blokken">
+          <div class="preview-blok">
+            <strong>2.2 Procenten berekenen</strong>
+            <p>Uitleg · voorbeeld · 6 oefenvragen · antwoorden</p>
+          </div>
+          <div class="preview-blok">
+            <strong>2.3 Verhoudingstabellen</strong>
+            <p>Uitleg · voorbeeld · 6 oefenvragen · antwoorden</p>
+          </div>
+          <div class="preview-blok">
+            <strong>3.3 Tijdrekenen</strong>
+            <p>Uitleg · voorbeeld · 6 oefenvragen · antwoorden</p>
+          </div>
+          <div class="preview-blok">
+            <strong>3.5 Oppervlakte</strong>
+            <p>Uitleg · voorbeeld · 6 oefenvragen · antwoorden</p>
+          </div>
+        </div>
+        <div class="preview-footer">
+          <span class="preview-badge">PDF · Direct beschikbaar</span>
+          <span class="preview-paginas">~35 pagina's</span>
+        </div>
+      </div>
+
+      <div>
+        <p class="sectie-label">Het oefenboek</p>
+        <h2>Een persoonlijk werkboek, klaar om af te drukken</h2>
+        <p style="font-family:var(--font-tekst); color:var(--grijs-4); line-height:1.7; margin-bottom:1.5rem; font-size:0.95rem;">Na de gratis scan weten we precies waar jouw kind moeite mee heeft. Op basis daarvan stellen we een persoonlijk oefenboek samen.</p>
+        <ul class="product-lijst">
+          <li>Gericht op de deelonderwerpen waar jouw kind kan groeien</li>
+          <li>Per onderwerp: heldere uitleg, een voorbeeld en 6 oefenvragen</li>
+          <li>Opbouw van makkelijk naar moeilijk</li>
+          <li>Antwoordenpagina achterin</li>
+          <li>Direct als PDF beschikbaar na betaling</li>
+          <li>Afdrukken en meteen aan de slag</li>
+        </ul>
+        <div class="prijs-blok">
+          <div style="display:flex; align-items:baseline; gap:0.8rem; margin-bottom:0.4rem;">
+            <span class="prijs-groot">€24,95</span>
+            <span class="prijs-vergelijk-tekst">eenmalig · geen abonnement</span>
+          </div>
+          <p class="prijs-nota">Ter vergelijking: één uur bijles kost €30 tot €50</p>
+        </div>
+        <a href="quiz.html" class="btn btn-primair btn-groot">Start eerst de gratis scan →</a>
+        <p style="font-size:0.78rem; color:var(--grijs-3); margin-top:0.8rem;">Je betaalt pas na de check, als je de resultaten hebt gezien</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- GRATIS -->
+<section id="gratis">
+  <div class="container" style="text-align:center;">
+    <p class="sectie-label" style="color:rgba(255,255,255,0.5);">Helemaal gratis</p>
+    <h2>De rekencheck kost niets</h2>
+    <p class="sectie-intro">Geen creditcard. Geen account. Geen verborgen kosten. Je start de check, je kind maakt de vragen, je ziet de resultaten.</p>
+    <div class="gratis-kaarten">
+      <div class="gratis-kaart">
+        <span class="icon">📋</span>
+        <h3>22 vragen · alle onderwerpen</h3>
+        <p>We dekken alle rekenonderdelen van groep 7 en 8. Geen blinde vlekken in de diagnose.</p>
+      </div>
+      <div class="gratis-kaart">
+        <span class="icon">📊</span>
+        <h3>Score per deelonderwerp</h3>
+        <p>Je ziet precies op welk onderdeel jouw kind sterk is en waar nog moeite zit.</p>
+      </div>
+      <div class="gratis-kaart">
+        <span class="icon">⚡</span>
+        <h3>Resultaat direct zichtbaar</h3>
+        <p>Geen wachten. Na de laatste vraag zie je de resultaten meteen op het scherm.</p>
+      </div>
+    </div>
+    <a href="quiz.html" class="btn btn-groot" style="background:white; color:var(--accent); font-weight:700;">Start gratis rekencheck →</a>
+    <p style="color:rgba(255,255,255,0.4); font-size:0.8rem; margin-top:0.8rem;">Duurt ongeveer 15 minuten · Geen account nodig</p>
+  </div>
+</section>
+
+<!-- FAQ -->
+<section id="faq">
+  <div class="container">
+    <p class="sectie-label">Veelgestelde vragen</p>
+    <h2>Wat ouders willen weten</h2>
+    <div class="faq-lijst">
+      <div class="faq-item">
+        <div class="faq-vraag" onclick="toggleFaq(this)">Is de rekencheck echt gratis?<span class="faq-pijl">▾</span></div>
+        <div class="faq-antwoord">Ja, volledig gratis. Je vult geen betaalgegevens in voor de scan. Je betaalt alleen als je daarna het persoonlijk oefenboek wilt ontvangen.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-vraag" onclick="toggleFaq(this)">Voor welke groep is dit bedoeld?<span class="faq-pijl">▾</span></div>
+        <div class="faq-antwoord">RekenCheck is gemaakt voor groep 7 en 8. De vragen sluiten aan op de Nederlandse rekenleerlijn en de IEP-toets die in die groepen wordt afgenomen.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-vraag" onclick="toggleFaq(this)">Hoe lang duurt de rekencheck?<span class="faq-pijl">▾</span></div>
+        <div class="faq-antwoord">Gemiddeld 15 minuten. Er zijn 22 vragen. Jouw kind kan rustig de tijd nemen — er is geen tijdslimiet.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-vraag" onclick="toggleFaq(this)">Wanneer ontvang ik het oefenboek?<span class="faq-pijl">▾</span></div>
+        <div class="faq-antwoord">Direct na betaling. Je ontvangt het oefenboek als PDF-bestand, zichtbaar op de pagina én per e-mail. Je kunt het meteen afdrukken.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-vraag" onclick="toggleFaq(this)">Wat als mijn kind op meerdere onderdelen lager scoort?<span class="faq-pijl">▾</span></div>
+        <div class="faq-antwoord">Dan richt het oefenboek zich op de meest urgente onderdelen. We kiezen de deelonderwerpen waar jouw kind het meeste baat bij heeft en beginnen altijd met de basisvragen.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-vraag" onclick="toggleFaq(this)">Wat doen jullie met de gegevens van mijn kind?<span class="faq-pijl">▾</span></div>
+        <div class="faq-antwoord">We slaan alleen het e-mailadres op dat je zelf invult, en de quizresultaten die nodig zijn voor het oefenboek. We delen geen gegevens met derden. Je kunt jouw gegevens altijd laten verwijderen.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-vraag" onclick="toggleFaq(this)">Kan ik het oefenboek ook digitaal gebruiken?<span class="faq-pijl">▾</span></div>
+        <div class="faq-antwoord">Ja. Het oefenboek is een PDF die je kunt afdrukken, maar ook digitaal kunt invullen als je een tablet of laptop gebruikt.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- VERTROUWEN -->
+<section id="vertrouwen">
+  <div class="container">
+    <p class="sectie-label">Betrouwbaar</p>
+    <h2>Waar wij voor staan</h2>
+    <div class="vertrouwen-grid">
+      <div class="vertrouwen-kaart">
+        <span class="vertrouwen-icon">📚</span>
+        <h3>Gebaseerd op Nederlandse leerlijnen</h3>
+        <p>Alle vragen zijn afgestemd op de officiële referentieniveaus voor rekenen in groep 7 en 8. Geen willekeurige vragen, maar gerichte diagnose.</p>
+      </div>
+      <div class="vertrouwen-kaart">
+        <span class="vertrouwen-icon">🔒</span>
+        <h3>Privacy serieus genomen</h3>
+        <p>We bewaren minimale gegevens. Geen naam van jouw kind vereist. E-mailadres alleen voor levering. Voldoet aan de AVG.</p>
+      </div>
+      <div class="vertrouwen-kaart">
+        <span class="vertrouwen-icon">💬</span>
+        <h3>Vragen? Wij helpen</h3>
+        <p>Heb je een vraag over het oefenboek of de scan? Stuur een e-mail naar <a href="/cdn-cgi/l/email-protection#b7ded9d1d8f7c5d2dcd2d9d4dfd2d4dc99d9db" style="color:var(--accent);"><span class="__cf_email__" data-cfemail="cba2a5ada48bb9aea0aea5a8a3aea8a0e5a5a7">[email&#160;protected]</span></a> en we reageren binnen één werkdag.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA BANNER -->
+<section id="cta-banner">
+  <div class="container">
+    <h2>Klaar om te ontdekken waar jouw kind staat?</h2>
+    <p>Start de gratis rekencheck. 15 minuten. Geen account. Direct inzicht.</p>
+    <a href="quiz.html" class="btn btn-groot" style="background:white; color:var(--accent); font-weight:700;">Start gratis rekencheck →</a>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-inner">
+    <span class="footer-logo">Reken<span>Check</span></span>
+    <div class="footer-links">
+      <a href="#faq">Veelgestelde vragen</a>
+      <a href="#">Privacyverklaring</a>
+      <a href="#">Algemene voorwaarden</a>
+      <a href="/cdn-cgi/l/email-protection#3a53545c557a485f515f5459525f5951145456">Contact</a>
+    </div>
+    <span class="footer-copy">© 2026 RekenCheck</span>
+  </div>
+</footer>
+
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><sc
