@@ -203,6 +203,9 @@
       <div class="hero-badge">📊 Groep 7 en 8 · Rekenen</div>
       <h1>Inzicht in de <em>rekenontwikkeling</em> van jouw kind</h1>
       <p class="hero-sub">Gratis rekencheck van 15 minuten. Duidelijk inzicht per onderwerp. Persoonlijk oefenboek dat gericht helpt — voor minder dan één uur bijles.</p>
+      <div style="background:var(--accent-l); border:1px solid #BFDBFE; border-radius:12px; padding:1rem 1.2rem; margin-bottom:1.5rem; font-size:0.88rem; color:var(--accent); font-weight:500;">
+        📅 <strong>Tip voor groep 7:</strong> Het voorlopig schooladvies wordt gegeven aan het einde van groep 7. Gericht oefenen nu maakt een verschil.
+      </div>
       <a href="quiz.html" class="btn btn-primair btn-groot">Start gratis rekencheck →</a>
       <p class="hero-note">Geen account nodig · Resultaat direct zichtbaar</p>
       <div class="hero-vertrouwen">
@@ -367,7 +370,7 @@
           <p class="prijs-nota">Ter vergelijking: één uur bijles kost €30 tot €50</p>
         </div>
         <a href="quiz.html" class="btn btn-primair btn-groot">Start eerst de gratis scan →</a>
-        <p style="font-size:0.78rem; color:var(--grijs-3); margin-top:0.8rem;">Je betaalt pas na de check, als je de resultaten hebt gezien</p>
+        <p style="font-size:0.78rem; color:var(--grijs-3); margin-top:0.8rem;">Na de check zie je de resultaten · daarna beslis je of je het oefenboek wilt · je ontvangt het direct als PDF om af te drukken</p>
       </div>
     </div>
   </div>
@@ -398,6 +401,22 @@
     </div>
     <a href="quiz.html" class="btn btn-groot" style="background:white; color:var(--accent); font-weight:700;">Start gratis rekencheck →</a>
     <p style="color:rgba(255,255,255,0.4); font-size:0.8rem; margin-top:0.8rem;">Duurt ongeveer 15 minuten · Geen account nodig</p>
+  </div>
+</section>
+
+<!-- VERHAAL -->
+<section style="background:var(--wit); border-top:1px solid var(--grijs-2); padding:4rem 2rem;">
+  <div class="container">
+    <div style="max-width:680px; margin:0 auto; text-align:center;">
+      <p class="sectie-label">Waarom RekenCheck bestaat</p>
+      <h2>Gemaakt door een betrokken ouder</h2>
+      <p style="font-family:var(--font-tekst); font-size:1.05rem; color:var(--grijs-4); line-height:1.8; margin-bottom:1.5rem;">
+        RekenCheck is ontstaan vanuit een eenvoudige vraag: hoe weet ik als ouder nu echt waar mijn kind staat met rekenen? Het rapport van school geeft een globaal beeld. De IEP-toets geeft een score. Maar wat moet je er dan mee?
+      </p>
+      <p style="font-family:var(--font-tekst); font-size:1.05rem; color:var(--grijs-4); line-height:1.8;">
+        RekenCheck vertaalt die vraag naar een concrete aanpak: eerst begrijpen waar ruimte voor groei zit, dan gericht oefenen. Niet meer, niet minder.
+      </p>
+    </div>
   </div>
 </section>
 
@@ -487,4 +506,13 @@
   </div>
 </footer>
 
-<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><sc
+<script>
+  function toggleFaq(el) {
+    const item = el.parentElement;
+    const wasOpen = item.classList.contains('open');
+    document.querySelectorAll('.faq-item').forEach(i => i.classList.remove('open'));
+    if (!wasOpen) item.classList.add('open');
+  }
+</script>
+</body>
+</html>
